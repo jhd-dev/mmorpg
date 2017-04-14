@@ -1,0 +1,17 @@
+#viewport {
+    background-color: #ddd;
+}
+
+#chat-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    opacity: 0.8;
+}
+
+#sidebar {
+    float: right;
+}
+
+#login-form {
+    text-align: right;
+}
