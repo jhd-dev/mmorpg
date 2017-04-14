@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/porygonj/mmorpg.git"
+  },
   "dependencies": {
     "express": "^4.15.2",
     "socket.io": "^1.7.3"

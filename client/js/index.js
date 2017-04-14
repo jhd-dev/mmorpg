@@ -6,13 +6,16 @@
     var ctx = canvas.getContext('2d');
     ctx.textAlign = 'center';
     
-    var players = [];
+    var entities = {
+        players: [],
+        bullets: []
+    };
     
     var socket = io();
     
-    socket.on('players', function(data){
+    socket.on('entities', function(data){
         console.log(data);
-        players = data;
+        entities = data;
     });
     
     document.onkeydown = function(e){
@@ -48,15 +51,27 @@
     
     var update = setInterval(function(){
         ctx.clearRect(0, 0, width, height);
-        for (var i = 0; i < players.length; i ++){
-            var player = players[i];
-            player.x += player.hspeed;
-            player.y += player.vspeed;
+        for (var i = 0; i < entities.players.length; i ++){
+            var player = entities.players[i];
+            updatePosition(player);
             ctx.fillStyle = 'black';
             ctx.fillText(player.name, player.x, player.y - 20);
             ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
             ctx.fillStyle = player.color;
             ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
         }
+        for (i = 0; i < entities.bullets.length; i ++){
+            var bullet = entities.bullets[i];
+            updatePosition(bullet);
+            ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
+            ctx.fillStyle = player.color;
+            ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+        }
     }, 20);
+    
+    function updatePosition(entity){
+        entity.x += entity.hspeed;
+        entity.y += entity.vspeed;
+    }
+    
 })(io);

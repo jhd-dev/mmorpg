@@ -1,6 +1,7 @@
 'use strict';
 
 var Entity = require('./entity');
+var Bullet = require('./bullet');
 
 class Player extends Entity {
     
@@ -14,25 +15,14 @@ class Player extends Entity {
         socket.on('keyUp', function(data){
             player.keys[data.key] = false;
         });
+        
+        socket.on('click', function(data){
+            player.shootBullet(data.x, data.y);
+        });
     }
     
     static disconnect(socket){
-        delete Player.list[socket.id];
-    }
-    
-    static update(){
-        return Object.getOwnPropertySymbols(Player.list).map(id => {
-            var player = Player.list[id];
-            player.update();
-            return {
-                name: player.name,
-                x: player.x,
-                y: player.y,
-                hspeed: player.hspeed,
-                vspeed: player.vspeed,
-                color: player.color
-            };
-        });
+        delete Player.instances[socket.id];
     }
     
     constructor(id){
@@ -41,7 +31,7 @@ class Player extends Entity {
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
         this.maxSpeed = 2;
-        Player.list[id] = this;
+        Player.instances[id] = this;
     }
     
     update(){
@@ -54,12 +44,13 @@ class Player extends Entity {
         this.vspeed = this.maxSpeed * (this.keys[40] - this.keys[38]);
     }
     
-    shootBullet(){
-        
+    shootBullet(x, y){
+        var bullet = new Bullet(this, Math.atan2(y, x));
     }
     
 }
 
-Player.list = {};
+Player.instances = {};
+Player.clientFormat = Entity.clientFormat.concat(['name', 'color']);
 
 module.exports = Player;

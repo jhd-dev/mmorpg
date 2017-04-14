@@ -1,6 +1,7 @@
 'use strict';
 
 var Player = require('../game/player');
+var Bullet = require('../game/bullet');
 
 var SOCKETS = {};
 var fps = 50;
@@ -23,9 +24,12 @@ module.exports = function(io){
     });
     
     var update = setInterval(function(){
-        var pack = Player.update();
+        var pack = {
+            players: Player.update(),
+            bullets: Bullet.update()
+        };
         Object.getOwnPropertySymbols(SOCKETS).forEach(id => {
-            SOCKETS[id].emit('players', pack);
+            SOCKETS[id].emit('entities', pack);
         });
     }, 1000 / fps);
     
