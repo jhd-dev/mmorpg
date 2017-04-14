@@ -1,12 +1,35 @@
+@font-face {
+    font-family: 'Silkscreen';
+    src: url('/fonts/silkscreen/slkscr-webfont.woff') format('woff'),
+        url('/fonts/silkscreen/slkscr-webfont.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Silkscreen', sans-serif;
+}
+
+#game {
+    display: inline-block;
+    border: 1px solid #333;
+    height: 600px;
+}
+
+#chat {
+    display: inline-block;
+    position: relative;
+    top: -12px;
+}
+
 #viewport {
+    display: inline-block;
     background-color: #ddd;
 }
 
-#chat-overlay {
+/*#chat-overlay {
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
     opacity: 0.8;
-}
+}*/
 
 #sidebar {
     float: right;

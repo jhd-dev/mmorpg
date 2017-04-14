@@ -17,7 +17,7 @@ class Player extends Entity {
         });
         
         socket.on('click', function(data){
-            player.shootBullet(data.x, data.y);
+            //player.shootBullet(data.x, data.y);
         });
     }
     
@@ -44,7 +44,7 @@ class Player extends Entity {
         this.vspeed = this.maxSpeed * (this.keys[40] - this.keys[38]);
     }
     
-    shootBullet(x, y){
+    getAngle(x, y){
         var bullet = new Bullet(this, Math.atan2(y, x));
     }
     

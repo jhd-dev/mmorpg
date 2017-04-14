@@ -71,10 +71,13 @@
             var inputs = message.substr(1).split(' ');
             if (commands[inputs[0]]){
                 commands[inputs[0]].apply(null, inputs.slice(1));
+            } else {
+                
             }
         } else {
             socket.emit('chatMsg', message.substr(0, 140));
         }
+        chatInput.value = '';
         e.preventDefault();
     };
     
@@ -99,8 +102,8 @@
     }, 20);
     
     function updatePosition(entity){
-        entity.x += entity.hspeed;
-        entity.y += entity.vspeed;
+        entity.x += entity.hspeed / 2;
+        entity.y += entity.vspeed / 2;
     }
     
 })(io);

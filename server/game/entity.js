@@ -14,9 +14,10 @@ class Entity {
         });
     }
     
-    constructor(){
-        this.x = 10;
-        this.y = 10;
+    constructor(x, y){
+        this.id = Symbol();
+        this.x = x || 0;
+        this.y = y || 0;
         this.hspeed = 0;
         this.vspeed = 0;
     }
