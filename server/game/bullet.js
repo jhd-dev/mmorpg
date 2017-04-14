@@ -7,6 +7,8 @@ class Bullet extends Entity {
     constructor(creator, angle){
         super();
         this.creator = creator;
+        this.x = this.creator.x;
+        this.y = this.creator.y;
         angle = Math.random() * 2 * Math.PI;
         this.hspeed = Math.cos(angle) * 5;
         this.vspeed = Math.sin(angle) * 5;

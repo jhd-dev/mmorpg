@@ -6,6 +6,18 @@ var Bullet = require('../game/bullet');
 var SOCKETS = {};
 var fps = 50;
 
+var commands = {
+    w: function(socket, recipient, message){
+        
+    }
+};
+
+function eachSocket(fn){
+    return Object.getOwnPropertySymbols(SOCKETS).map(id => {
+        return fn(SOCKETS[id], id);
+    });
+}
+
 module.exports = function(io){
     
     io.sockets.on('connection', function(socket){
@@ -21,6 +33,26 @@ module.exports = function(io){
             Player.disconnect(socket);
         });
         
+        socket.on('chatMsg', function(data){
+            if (data.charAt(0) === '/'){
+                var inputs = data.substr(1).split(' ');
+                if (commands[inputs[0]]){
+                    commands[inputs[0]].apply([socket].concat(inputs.slice(1)));
+                }
+            } else {
+                eachSocket(socket => {
+                    socket.emit('chatMsg', {
+                        name: 'user123',
+                        msg: data
+                    });
+                });
+            }
+        });
+        
+        socket.on('clientDebug', function(data){
+            console.log(data);
+        });
+        
     });
     
     var update = setInterval(function(){
@@ -28,8 +60,8 @@ module.exports = function(io){
             players: Player.update(),
             bullets: Bullet.update()
         };
-        Object.getOwnPropertySymbols(SOCKETS).forEach(id => {
-            SOCKETS[id].emit('entities', pack);
+        eachSocket(socket => {
+            socket.emit('entities', pack);
         });
     }, 1000 / fps);
     
