@@ -23,10 +23,13 @@ class Player extends Entity {
         socket.on('click', function(data){
             player.shootBullet(data.x, data.y);
         });
+        
+        return player;
     }
     
     static disconnect(socket){
         delete Player.instances[socket.id];
+        socket.player.destroy();
     }
     
     constructor(id){
@@ -37,7 +40,7 @@ class Player extends Entity {
         this.maxSpeed = 2;
         console.log(id);
         console.log(Player.instances);
-        Player.instances[id] = this;
+        //Player.instances[id] = this;
     }
     
     update(){
@@ -51,7 +54,9 @@ class Player extends Entity {
     }
     
     shootBullet(x, y){
-        var bullet = this.GAME.create('Bullet', [this, x, y]);
+        var bullet = this.GAME.create('Bullet', [this, Math.atan2(y - this.y, x - this.x)]);
+        bullet.hspeed += this.hspeed;
+        bullet.vspeed += this.vspeed;
     }
     
 }

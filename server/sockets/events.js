@@ -28,7 +28,8 @@ module.exports = function(io){
         
         socket.id = Symbol();
         SOCKETS[socket.id] = socket;
-        GAME.connect(socket);
+        var player = GAME.connect(socket);
+        socket.player = player;
         
         socket.on('disconnect', function(){
             console.log('removed socket');
@@ -44,10 +45,13 @@ module.exports = function(io){
                 }
             } else {
                 eachSocket(socket => {
-                    socket.emit('chatMsg', {
-                        name: 'user123',
-                        msg: data
-                    });
+                    if (data.length > 0){
+                        console.log(GAME);
+                        socket.emit('chatMsg', {
+                            name: player.name,
+                            msg: data
+                        });
+                    }
                 });
             }
         });

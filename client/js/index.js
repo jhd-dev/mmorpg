@@ -52,19 +52,18 @@
     });
     
     document.onkeydown = function(e){
-        socket.emit('keyDown', {
-            key: e.keyCode
-        });
-        if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1){
-            e.preventDefault();
-        }
         if (!textboxFocused){
+            socket.emit('keyDown', {
+                key: e.keyCode
+            });
+            if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1){
+                e.preventDefault();
+            }
             if (e.keyCode === 84){
                 chatInput.focus();
                 e.preventDefault();
             }
             if (e.keyCode === 191){
-                //chatInput.value += '/';
                 chatInput.focus();
             }
         }
@@ -108,7 +107,9 @@
         } else {
             socket.emit('chatMsg', message.substr(0, 140));
         }
+        chatInput.blur();
         chatInput.value = '';
+        textboxFocused = false;
         e.preventDefault();
     };
     

@@ -15,10 +15,10 @@ class Entity {
         });
     }
     
-    constructor(x, y){
+    constructor(x = 0, y = 0){
         this.id = Symbol();
-        this.x = x || 0;
-        this.y = y || 0;
+        this.x = x;
+        this.y = y;
         this.hspeed = 0;
         this.vspeed = 0;
     }
