@@ -6,6 +6,13 @@
 
 body {
     font-family: 'Silkscreen', sans-serif;
+    background-color: #333;
+    color: #ddd;
+}
+
+input {
+    font-family: inherit;
+    font-size: inherit;
 }
 
 #game {
@@ -14,10 +21,27 @@ body {
     height: 600px;
 }
 
+#chat-cont {
+    display: table;
+    float: left;
+    height: 600px;
+    background-color: #eee;
+    color: #000;
+}
+
 #chat {
-    display: inline-block;
-    position: relative;
-    top: -12px;
+    display: table-cell;
+    vertical-align: bottom;
+    padding: 4px 0 0 4px;
+}
+
+#chat-input {
+    border: 0;
+    background-color: inherit;
+}
+
+#chat-input:focus {
+    outline: none;
 }
 
 #viewport {

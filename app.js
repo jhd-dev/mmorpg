@@ -3,7 +3,7 @@ var http = require('http');
 var routes = require('./server/routes/router');
 var events = require('./server/sockets/events');
 
-var port = 8080;
+var port = process.env.PORT || 8080;
 
 var app = express();
 app.use('/', express.static(__dirname + '/client'));

@@ -4,13 +4,30 @@
     var width = 800;
     var height = 600;
     
+    var rightKey = 68;
+    var upKey = 87;
+    var leftKey = 65;
+    var downKey = 83;
+    
     var canvas = document.getElementById('viewport');
     var ctx = canvas.getContext('2d');
     ctx.textAlign = 'center';
     
+    var chatCont = document.getElementById('chat-cont');
     var chatMessages = document.getElementById('chat-message-cont');
     var chatForm = document.getElementById('chat-form');
     var chatInput = document.getElementById('chat-input');
+    
+    var textboxFocused = false;
+    var textboxes = [chatInput];
+    for (var i = 0; i < textboxes.length; i ++){
+        textboxes[i].onfocus = function(){
+            textboxFocused = true;
+        };
+        textboxes[i].onblur = function(){
+            textboxFocused = false;
+        };
+    }
     
     var entities = {
         players: [],
@@ -38,8 +55,18 @@
         socket.emit('keyDown', {
             key: e.keyCode
         });
-        if ([37, 38, 39, 40].indexOf(e.keyCode) !== -1){
+        if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1){
             e.preventDefault();
+        }
+        if (!textboxFocused){
+            if (e.keyCode === 84){
+                chatInput.focus();
+                e.preventDefault();
+            }
+            if (e.keyCode === 191){
+                //chatInput.value += '/';
+                chatInput.focus();
+            }
         }
     };
     
@@ -65,6 +92,10 @@
         });
     };
     
+    chatCont.onclick = function(e){
+        chatInput.focus();
+    };
+    
     chatForm.onsubmit = function(e){
         var message = chatInput.value;
         if (message.charAt(0) === '/'){
@@ -83,21 +114,25 @@
     
     var update = setInterval(function(){
         ctx.clearRect(0, 0, width, height);
-        for (var i = 0; i < entities.players.length; i ++){
-            var player = entities.players[i];
-            updatePosition(player);
-            ctx.fillStyle = 'black';
-            ctx.fillText(player.name, player.x, player.y - 20);
-            ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+        if (entities.Player){
+            for (var i = 0; i < entities.Player.length || 0; i ++){
+                var player = entities.Player[i];
+                updatePosition(player);
+                ctx.fillStyle = 'black';
+                ctx.fillText(player.name, player.x, player.y - 20);
+                ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
+                ctx.fillStyle = player.color;
+                ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+            }
         }
-        for (i = 0; i < entities.bullets.length; i ++){
-            var bullet = entities.bullets[i];
-            updatePosition(bullet);
-            ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
-            ctx.fillStyle = 'black';
-            ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+        if (entities.Bullet){
+            for (i = 0; i < entities.Bullet.length || 0; i ++){
+                var bullet = entities.Bullet[i];
+                updatePosition(bullet);
+                ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+            }
         }
     }, 20);
     

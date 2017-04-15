@@ -1,12 +1,16 @@
 'use strict';
 
 var Entity = require('./entity');
-var Bullet = require('./bullet');
+
+var rightKey = 68;
+var upKey = 87;
+var leftKey = 65;
+var downKey = 83;
 
 class Player extends Entity {
     
     static connect(socket){
-        var player = new Player(socket.id);
+        var player = this.GAME.create('Player', [socket.id]);
         
         socket.on('keyDown', function(data){//console.log(data.key);
             player.keys[data.key] = true;
@@ -17,7 +21,7 @@ class Player extends Entity {
         });
         
         socket.on('click', function(data){
-            //player.shootBullet(data.x, data.y);
+            player.shootBullet(data.x, data.y);
         });
     }
     
@@ -31,6 +35,8 @@ class Player extends Entity {
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
         this.maxSpeed = 2;
+        console.log(id);
+        console.log(Player.instances);
         Player.instances[id] = this;
     }
     
@@ -40,12 +46,12 @@ class Player extends Entity {
     }
     
     updateSpeed(){
-        this.hspeed = this.maxSpeed * (this.keys[39] - this.keys[37]);
-        this.vspeed = this.maxSpeed * (this.keys[40] - this.keys[38]);
+        this.hspeed = this.maxSpeed * (this.keys[rightKey] - this.keys[leftKey]);
+        this.vspeed = this.maxSpeed * (this.keys[downKey] - this.keys[upKey]);
     }
     
-    getAngle(x, y){
-        var bullet = new Bullet(this, Math.atan2(y, x));
+    shootBullet(x, y){
+        var bullet = this.GAME.create('Bullet', [this, x, y]);
     }
     
 }

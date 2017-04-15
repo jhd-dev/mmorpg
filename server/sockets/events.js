@@ -1,7 +1,10 @@
 'use strict';
 
+var Game = require('../game/game');
 var Player = require('../game/player');
-var Bullet = require('../game/bullet');
+
+var GAME = Game.init(['Player', 'Bullet']);
+console.log(GAME);
 
 var SOCKETS = {};
 var fps = 50;
@@ -25,12 +28,12 @@ module.exports = function(io){
         
         socket.id = Symbol();
         SOCKETS[socket.id] = socket;
-        Player.connect(socket);
+        GAME.connect(socket);
         
         socket.on('disconnect', function(){
             console.log('removed socket');
             delete SOCKETS[socket.id];
-            Player.disconnect(socket);
+            GAME.disconnect(socket);
         });
         
         socket.on('chatMsg', function(data){
@@ -55,13 +58,9 @@ module.exports = function(io){
         
     });
     
-    var update = setInterval(function(){
-        var pack = {
-            players: Player.update(),
-            bullets: Bullet.update()
-        };
+    setInterval(function(){
         eachSocket(socket => {
-            socket.emit('entities', pack);
+            socket.emit('entities', GAME.update());
         });
     }, 1000 / fps);
     

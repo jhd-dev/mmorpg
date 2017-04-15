@@ -14,6 +14,8 @@ class Bullet extends Entity {
         this.vspeed = Math.sin(angle) * 5;
         this.id = Symbol();
         Bullet.list[this.id] = this;
+        
+        setTimeout(() => this.destroy(), 1000);
     }
     
 }

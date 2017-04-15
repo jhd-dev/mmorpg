@@ -3,6 +3,7 @@
 class Entity {
     
     static update(){
+        //console.log(this.instances);
         return Object.getOwnPropertySymbols(this.instances).map(id => {
             var entity = this.instances[id];
             entity.update();
@@ -21,6 +22,8 @@ class Entity {
         this.hspeed = 0;
         this.vspeed = 0;
     }
+    
+    destroy(){}
     
     update(){
         this.updatePosition();
