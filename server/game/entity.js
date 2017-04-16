@@ -15,15 +15,17 @@ class Entity {
         });
     }
     
-    constructor(x = 0, y = 0){
-        this.id = Symbol();
+    constructor(GAME, x = 0, y = 0){
+        this.GAME = GAME;
         this.x = x;
         this.y = y;
         this.hspeed = 0;
         this.vspeed = 0;
     }
     
-    destroy(){}
+    destroy(){
+        this.GAME.destroy(this);
+    }
     
     update(){
         this.updatePosition();

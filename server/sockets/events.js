@@ -1,7 +1,6 @@
 'use strict';
 
 var Game = require('../game/game');
-var Player = require('../game/player');
 
 var GAME = Game.init(['Player', 'Bullet']);
 console.log(GAME);

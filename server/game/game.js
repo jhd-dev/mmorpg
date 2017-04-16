@@ -1,18 +1,14 @@
 'use strict';
 
+var User = require('../models/user');
 var setupGameClass = require('./setup-class');
 
 var Game = {
         
     init: (gameClassNames) => {
         Game.gameClasses = {};
-        gameClassNames.forEach(gameClass => {
-            if (typeof gameClass === 'string'){
-                Game.gameClasses[gameClass] = setupGameClass(Game, require('./' + gameClass.toLowerCase()));
-            } else if (typeof gameClass === 'function'){
-                console.log('function');
-                Game.gameClasses[gameClass] = gameClass;
-            }
+        gameClassNames.forEach(className => {
+            Game.gameClasses[className] = setupGameClass(Game, require('./' + className.toLowerCase()));
         });
         return Game;
     },
@@ -22,6 +18,7 @@ var Game = {
     },
     
     disconnect: (socket) => {
+        Game.saveUser(socket);
         return Game.gameClasses.Player.disconnect(socket);
     },
     
@@ -34,7 +31,35 @@ var Game = {
     },
     
     create: (className, args) => {
-        return new Game.gameClasses[className](...args);
+        return new Game.gameClasses[className](Game, ...args);
+    },
+    
+    saveUser: (socket) => {
+        var player = socket.player;
+        User.findOne({
+            username: player.name,
+        }, {
+            x: player.x,
+            y: player.y
+        }, (err, user) => {
+            if (err) throw err;
+        });
+    },
+    
+    loadUser: (username, password, callback) => {
+        User.findOne({
+            username
+        }, (err, user) => {
+            if (err) throw err;
+            
+            if (user){
+                if (user.password === password){
+                    callback('', user);
+                }
+            } else {
+                callback('User not found', null);
+            }
+        });
     }
     
 };
