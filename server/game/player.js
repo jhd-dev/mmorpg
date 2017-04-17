@@ -10,7 +10,7 @@ var downKey = 83;
 class Player extends Entity {
     
     static connect(socket){
-        var player = this.GAME.create('Player', [socket.id]);
+        var player = this.GAME.create('Player');
         
         socket.on('keyDown', function(data){//console.log(data.key);
             player.keys[data.key] = true;
@@ -32,14 +32,14 @@ class Player extends Entity {
         socket.player.destroy();
     }
     
-    constructor(id){
-        super();
+    constructor(GAME){
+        super(GAME);
         this.name = 'Guest' + String(Math.random()).substr(2, 4);
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
         this.maxSpeed = 2;
-        console.log(id);
-        console.log(Player.instances);
+        console.log(this.id);
+        //console.log(Player.instances);
         //Player.instances[id] = this;
     }
     
@@ -61,7 +61,6 @@ class Player extends Entity {
     
 }
 
-Player.instances = {};
 Player.clientFormat = Entity.clientFormat.concat(['name', 'color']);
 
 module.exports = Player;

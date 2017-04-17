@@ -3,8 +3,7 @@
 class Entity {
     
     static update(){
-        //console.log(this.instances);
-        return Object.getOwnPropertySymbols(this.instances).map(id => {
+        return Object.keys(this.instances).map(id => {
             var entity = this.instances[id];
             entity.update();
             var clientEntity = {};
@@ -15,16 +14,28 @@ class Entity {
         });
     }
     
+    static generateId(){
+        var id;
+        do {
+            id = String(Math.round(Math.random() * Math.pow(10, 8)));
+        } while (this.instances[id]);
+        return id;
+    }
+    
     constructor(GAME, x = 0, y = 0){
         this.GAME = GAME;
+        this.type = this.constructor.name;
         this.x = x;
         this.y = y;
         this.hspeed = 0;
         this.vspeed = 0;
+        this.id = this.constructor.generateId();
+        this.constructor.instances[this.id] = this;
     }
     
     destroy(){
-        this.GAME.destroy(this);
+        delete this.constructor.instances[this.id];
+        //this.GAME.destroy(this);
     }
     
     update(){

@@ -1,37 +1,38 @@
 'use strict';
 
 var User = require('../models/user');
-var setupGameClass = require('./setup-class');
 
 var Game = {
         
     init: (gameClassNames) => {
-        Game.gameClasses = {};
+        Game.objects = {};
         gameClassNames.forEach(className => {
-            Game.gameClasses[className] = setupGameClass(Game, require('./' + className.toLowerCase()));
+            Game.objects[className] = require('./' + className.toLowerCase());
+            Game.objects[className].GAME = Game;
+            Game.objects[className].instances = {};
         });
         return Game;
     },
     
     connect: (socket) => {
-        return Game.gameClasses.Player.connect(socket);
+        return Game.objects.Player.connect(socket);
     },
     
     disconnect: (socket) => {
         Game.saveUser(socket);
-        return Game.gameClasses.Player.disconnect(socket);
+        return Game.objects.Player.disconnect(socket);
     },
     
     update: () => {
         var pack = {};
-        Object.keys(Game.gameClasses).forEach(className => {
-            pack[className] = Game.gameClasses[className].update();
+        Object.keys(Game.objects).forEach(className => {
+            pack[className] = Game.objects[className].update();
         });
         return pack;
     },
     
-    create: (className, args) => {
-        return new Game.gameClasses[className](Game, ...args);
+    create: (className, args = []) => {
+        return new Game.objects[className](Game, ...args);
     },
     
     saveUser: (socket) => {

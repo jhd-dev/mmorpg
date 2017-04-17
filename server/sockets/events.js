@@ -15,7 +15,7 @@ var commands = {
 };
 
 function eachSocket(fn){
-    return Object.getOwnPropertySymbols(SOCKETS).map(id => {
+    return Object.keys(SOCKETS).map(id => {
         return fn(SOCKETS[id], id);
     });
 }
@@ -25,9 +25,9 @@ module.exports = function(io){
     io.sockets.on('connection', function(socket){
         console.log('new socket');
         
-        socket.id = Symbol();
-        SOCKETS[socket.id] = socket;
         var player = GAME.connect(socket);
+        socket.id = player.id;
+        SOCKETS[socket.id] = socket;
         socket.player = player;
         
         socket.on('disconnect', function(){
@@ -45,7 +45,7 @@ module.exports = function(io){
             } else {
                 eachSocket(socket => {
                     if (data.length > 0){
-                        console.log(GAME);
+                        //console.log(GAME);
                         socket.emit('chatMsg', {
                             name: player.name,
                             msg: data
@@ -62,8 +62,9 @@ module.exports = function(io){
     });
     
     setInterval(function(){
+        var pack = GAME.update();
         eachSocket(socket => {
-            socket.emit('entities', GAME.update());
+            socket.emit('entities', pack);
         });
     }, 1000 / fps);
     

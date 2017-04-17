@@ -4,15 +4,14 @@ var Entity = require('./entity');
 
 class Bullet extends Entity {
     
-    constructor(creator, angle){
-        super();
+    constructor(GAME, creator, angle){
+        super(GAME);
         this.creator = creator;
         this.x = this.creator.x;
         this.y = this.creator.y;
         //angle = Math.random() * 2 * Math.PI;
         this.hspeed = Math.cos(angle) * 5;
         this.vspeed = Math.sin(angle) * 5;
-        this.id = Symbol();
         //Bullet.list[this.id] = this;
         
         setTimeout(() => this.destroy(), 1000);
@@ -20,7 +19,6 @@ class Bullet extends Entity {
     
 }
 
-//Bullet.list = {};
 Bullet.clientFormat = Entity.clientFormat;
 
 module.exports = Bullet;
