@@ -2,12 +2,14 @@
 
 var User = require('../models/user');
 
+var pathToObjects = './';
+
 var Game = {
         
     init: (gameClassNames) => {
         Game.objects = {};
         gameClassNames.forEach(className => {
-            Game.objects[className] = require('./' + className.toLowerCase());
+            Game.objects[className] = require(pathToObjects + className.toLowerCase());
             Game.objects[className].GAME = Game;
             Game.objects[className].instances = {};
         });
@@ -24,9 +26,11 @@ var Game = {
     },
     
     update: () => {
-        var pack = {};
+        var pack = {
+            entities: {}
+        };
         Object.keys(Game.objects).forEach(className => {
-            pack[className] = Game.objects[className].update();
+            pack.entities[className] = Game.objects[className].update();
         });
         return pack;
     },

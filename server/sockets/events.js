@@ -1,12 +1,12 @@
 'use strict';
 
+var config = require('../config/config');
 var Game = require('../game/game');
 
 var GAME = Game.init(['Player', 'Bullet']);
-console.log(GAME);
 
 var SOCKETS = {};
-var fps = 50;
+var fps = config.FPS;
 
 var commands = {
     w: function(socket, recipient, message){
@@ -29,6 +29,10 @@ module.exports = function(io){
         socket.id = player.id;
         SOCKETS[socket.id] = socket;
         socket.player = player;
+        socket.emit('init', {
+            entities: GAME.objects,
+            clientId: socket.id
+        });
         
         socket.on('disconnect', function(){
             console.log('removed socket');
@@ -64,7 +68,7 @@ module.exports = function(io){
     setInterval(function(){
         var pack = GAME.update();
         eachSocket(socket => {
-            socket.emit('entities', pack);
+            socket.emit('update', pack);
         });
     }, 1000 / fps);
     

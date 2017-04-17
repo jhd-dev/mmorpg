@@ -15,10 +15,17 @@ input {
     font-size: inherit;
 }
 
+#col-main {
+    text-align: center;
+}
+
 #game {
     display: inline-block;
     border: 1px solid #333;
     height: 600px;
+    -webkit-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -36,6 +43,7 @@ input {
     display: table-cell;
     vertical-align: bottom;
     padding: 4px 0 0 4px;
+    text-align: left;
 }
 
 #chat-input {

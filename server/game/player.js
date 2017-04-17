@@ -38,13 +38,19 @@ class Player extends Entity {
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
         this.maxSpeed = 2;
-        console.log(this.id);
-        //console.log(Player.instances);
-        //Player.instances[id] = this;
+        this.maxHp = 10;
+        this.hp = this.maxHp;
     }
     
     update(){
         this.updateSpeed();
+        Object.keys(this.GAME.objects.Bullet.instances).forEach(bulletId => {
+            var bullet = this.GAME.objects.Bullet.instances[bulletId];
+            if (bullet.creator !== this && this.x < bullet.x + 16 && this.x + 16 > bullet.x && this.y < bullet.y + 16 && this.y + 16 > bullet.y){
+                this.hp = Math.max(0, this.hp - 1);
+                bullet.destroy();
+            }
+        });
         super.update();
     }
     
@@ -61,6 +67,6 @@ class Player extends Entity {
     
 }
 
-Player.clientFormat = Entity.clientFormat.concat(['name', 'color']);
+Player.clientFormat = Entity.clientFormat.concat(['name', 'color', 'hp', 'maxHp']);
 
 module.exports = Player;

@@ -33,6 +33,10 @@
         players: [],
         bullets: []
     };
+    var clientId = '';
+    
+    var background = new Image();
+    background.src = '../img/grass.png';
     
     var commands = {
         debug: function(variable){
@@ -42,9 +46,28 @@
     
     var socket = io();
     
-    socket.on('entities', function(data){
-        //console.log(data);
-        entities = data;
+    socket.on('init', function(data){
+        entities = data.entities;
+        clientId = data.clientId;
+        setInterval(update, 20);
+    });
+    
+    socket.on('update', function(data){
+        entities = data.entities;
+        /*var objects = Object.keys(data.entities);
+        for (var i = 0; i < objects.length; i ++){
+            var objectType = objects[i];
+            var instanceIds = Object.keys(data.entities[objectType]);
+            for (var j = 0; j < instanceIds.length; j ++){
+                var instanceId = instanceIds[j];
+                var changes = Object.keys(data.entities[objectType][instanceId]);
+                for (var k = 0; k < changes.length; k ++){
+                    var changedProp = changes[k];
+                    var changedVal = data.entities[objectType][instanceId];
+                    entities[objectType][instanceId][changedProp] = changedVal;
+                }
+            }
+        }*/
     });
     
     socket.on('chatMsg', function(data){
@@ -113,8 +136,10 @@
         e.preventDefault();
     };
     
-    var update = setInterval(function(){
+    
+    function update(){
         ctx.clearRect(0, 0, width, height);
+        drawMap();
         if (entities.Player){
             for (var i = 0; i < entities.Player.length || 0; i ++){
                 var player = entities.Player[i];
@@ -124,6 +149,12 @@
                 ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
                 ctx.fillStyle = player.color;
                 ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+                //if (i === clientId){
+                    ctx.fillStyle = 'black';
+                    ctx.fillRect(player.x - 12, player.y - 16, 24, 4);
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(player.x - 12, player.y - 16, 24 * player.hp / player.maxHp, 4);
+                //}
             }
         }
         if (entities.Bullet){
@@ -135,7 +166,15 @@
                 ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
             }
         }
-    }, 20);
+    }
+    
+    function drawMap(){
+        for (var x = 0; x < width; x += 480){
+            for (var y = 0; y < height; y += 480){
+                ctx.drawImage(background, x, y, 480, 480);
+            }
+        }
+    }
     
     function updatePosition(entity){
         entity.x += entity.hspeed / 2;
