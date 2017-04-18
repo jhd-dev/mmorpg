@@ -13,6 +13,8 @@
     var ctx = canvas.getContext('2d');
     ctx.textAlign = 'center';
     
+    var gameCont = document.getElementById('game');
+    
     var chatCont = document.getElementById('chat-cont');
     var chatMessages = document.getElementById('chat-message-cont');
     var chatForm = document.getElementById('chat-form');
@@ -71,7 +73,11 @@
     });
     
     socket.on('chatMsg', function(data){
-        chatMessages.innerHTML += '<div class="chat-message">' + data.name + ': ' + data.msg + '</div>';
+        if (data.type === 'normal'){
+            chatMessages.innerHTML += '<div class="chat-message">' + data.name + ': ' + data.msg + '</div>';
+        } else if (data.type === 'private'){
+            chatMessages.innerHTML += '<div class="chat-message chat-message-private">' + data.name + ' to ' + data.recipient + ': ' + data.msg + '</div>';
+        }
     });
     
     document.onkeydown = function(e){
@@ -114,6 +120,10 @@
         });
     };
     
+    gameCont.oncontextmenu = function(e){
+        e.preventDefault();
+    };
+    
     chatCont.onclick = function(e){
         chatInput.focus();
     };
@@ -125,7 +135,7 @@
             if (commands[inputs[0]]){
                 commands[inputs[0]].apply(null, inputs.slice(1));
             } else {
-                
+                socket.emit('chatMsg', message.substr(0, 140));
             }
         } else {
             socket.emit('chatMsg', message.substr(0, 140));

@@ -9,8 +9,22 @@ var SOCKETS = {};
 var fps = config.FPS;
 
 var commands = {
-    w: function(socket, recipient, message){
-        
+    pm: function(socket, recipient, message){console.log('pm');
+        var recipientId = Object.keys(SOCKETS).find(id => SOCKETS[id].player.name === recipient);
+        if (SOCKETS[recipientId]){
+            SOCKETS[recipientId].emit('chatMsg', {
+                name: socket.player.name,
+                msg: message,
+                type: 'private',
+                recipient: SOCKETS[recipientId].player.name
+            });
+            socket.emit('chatMsg', {
+                name: socket.player.name,
+                msg: message,
+                type: 'private',
+                recipient: SOCKETS[recipientId].player.name
+            });
+        }
     }
 };
 
@@ -42,9 +56,9 @@ module.exports = function(io){
         
         socket.on('chatMsg', function(data){
             if (data.charAt(0) === '/'){
-                var inputs = data.substr(1).split(' ');
+                var inputs = data.substr(1).split(' '); console.log(inputs);
                 if (commands[inputs[0]]){
-                    commands[inputs[0]].apply([socket].concat(inputs.slice(1)));
+                    commands[inputs[0]].apply(null, [socket].concat(inputs.slice(1)));
                 }
             } else {
                 eachSocket(socket => {
@@ -52,7 +66,8 @@ module.exports = function(io){
                         //console.log(GAME);
                         socket.emit('chatMsg', {
                             name: player.name,
-                            msg: data
+                            msg: data,
+                            type: 'normal'
                         });
                     }
                 });

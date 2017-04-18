@@ -52,5 +52,5 @@ setTimeout(function(){
         fs.writeFile('./profile.cpuprofile', result);
         profile1.delete();
         console.log('Profile saved.');
-    });
+    }, 10000);
 });
