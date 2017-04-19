@@ -19,14 +19,9 @@
     "socket.io": "^1.7.3",
     "v8-profiler": "^5.7.0"
   },
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-babili": "0.0.12",
-    "babel-preset-react": "^6.24.1"
-  },
+  "devDependencies": {},
   "scripts": {
-    "start": "node app.js",
-    "watch": "babel --watch ./client/js/src/index.jsx --out-file ./client/js/lib/index.js"
+    "start": "node app.js"
   },
   "author": "Jonathan Doliver",
   "license": "ISC"
