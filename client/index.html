@@ -1,51 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Fun Game Thing</title>
         <link rel="stylesheet" href="./css/main.css" type="text/css" />
     </head>
     <body>
-        <div id="col-main">
-            <h1 id="head-main">Fun Game Thing</h1>
-            <div id="game">
-                <div id="chat-cont">
-                    <div id="chat">
-                        <div id="chat-message-cont">
-                            <div class="chat-message">Welcome!</div>
+        <div id="app">
+            <div id="col-main">
+                <h1 id="head-main">Fun Game Thing</h1>
+                <div id="game">
+                    <div id="chat-cont">
+                        <div id="chat">
+                            <div id="chat-message-cont">
+                                <template v-for="message in messages">
+                                    <div v-if="message.type === 'private'" class="chat-message chat-message-private">{{message.name}} to {{message.recipient}}: {{message.msg}}</div>
+                                    <div v-else-if="message.type === 'info'" class="chat-message chat-message-info">{{message.msg}}</div>
+                                    <div v-else class="chat-message">{{message.name}}: {{message.msg}}</div>
+                                </template>
+                            </div>
+                            <form id="chat-form" autocomplete="off">
+                                &gt; <input id="chat-input" type="text" name="message" placeholder="Press 'T' to chat" /><input id="chat-submit" type="submit" value="Send" />
+                            </form>
                         </div>
-                        <form id="chat-form" autocomplete="off">
-                            &gt; <input id="chat-input" type="text" name="message" placeholder="Press 'T' to chat" /><input id="chat-submit" type="submit" value="Send" />
-                        </form>
                     </div>
+                    <canvas id="viewport" width="800" height="600"></canvas>
                 </div>
-                <canvas id="viewport" width="800" height="600"></canvas>
             </div>
-        </div>
-        <div id="sidebar">
-            <h2 id="login-head">Login:</h2>
-            <form id="login-form">
-                <span class="login-label">Username:</span>
-                <input class="login-input" type="text" name="username" />
-                <br />
-                <span class="login-label">Password:</span>
-                <input class="login-input" type="password" name="password" />
-                <br />
-                <input class="login-submit" type="submit" value="Login" />
-            </form>
-            <h2 id="login-head">Sign up:</h2>
-            <form id="signup-form" action="/signup" method="POST">
-                <span class="login-label">Username:</span>
-                <input class="login-input" type="text" name="username" />
-                <br />
-                <span class="login-label">Password:</span>
-                <input class="login-input" type="password" name="password" />
-                <br />
-                <input class="login-submit" type="submit" value="Sign Up" />
-            </form>
+            <div id="sidebar">
+                <h2 id="login-head">Login:</h2>
+                <form id="login-form">
+                    <span class="login-label">Username:</span>
+                    <input class="login-input" type="text" name="username" />
+                    <br />
+                    <span class="login-label">Password:</span>
+                    <input class="login-input" type="password" name="password" />
+                    <br />
+                    <input class="login-submit" type="submit" value="Login" />
+                </form>
+                <h2 id="login-head">Sign up:</h2>
+                <form id="signup-form" action="/signup" method="POST">
+                    <span class="login-label">Username:</span>
+                    <input class="login-input" type="text" name="username" />
+                    <br />
+                    <span class="login-label">Password:</span>
+                    <input class="login-input" type="password" name="password" />
+                    <br />
+                    <input class="login-submit" type="submit" value="Sign Up" />
+                </form>
+            </div>
         </div>
         
         <script type="text/javascript" src="https://unpkg.com/vue"></script>
         <script type="text/javascript" src="./js/vendor/socket.io.js"></script>
-        <script type="text/javascript" src="./js/index.js"></script>
+        <script type="text/javascript" src="./js/dist/index.js"></script>
     </body>
 </html>

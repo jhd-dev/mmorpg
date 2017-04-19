@@ -9,6 +9,16 @@
     var leftKey = 65;
     var downKey = 83;
     
+    var app = new Vue({
+        el: '#chat-cont',
+        data: {
+            messages: [{
+                type: 'info',
+                msg: 'Welcome to the game!'
+            }]
+        }
+    });
+    
     var canvas = document.getElementById('viewport');
     var ctx = canvas.getContext('2d');
     ctx.textAlign = 'center';
@@ -41,6 +51,12 @@
     background.src = '../img/grass.png';
     
     var commands = {
+        help: function(){
+            app.messages.push({
+                type: 'info',
+                msg: 'Commands:\n/help - List all commands'
+            });
+        },
         debug: function(variable){
             socket.emit('clientDebug', variable + ': ' + eval(variable));
         }
@@ -72,12 +88,8 @@
         }*/
     });
     
-    socket.on('chatMsg', function(data){
-        if (data.type === 'normal'){
-            chatMessages.innerHTML += '<div class="chat-message">' + data.name + ': ' + data.msg + '</div>';
-        } else if (data.type === 'private'){
-            chatMessages.innerHTML += '<div class="chat-message chat-message-private">' + data.name + ' to ' + data.recipient + ': ' + data.msg + '</div>';
-        }
+    socket.on('chatMsg', data => {
+        app.messages = app.messages.concat([data]);
     });
     
     document.onkeydown = function(e){
