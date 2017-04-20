@@ -176,7 +176,7 @@
                 ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
                 ctx.fillStyle = player.color;
                 ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
-                //if (i === clientId){
+                //if (id === clientId){
                     ctx.fillStyle = 'black';
                     ctx.fillRect(player.x - 12, player.y - 16, 24, 4);
                     ctx.fillStyle = 'red';
