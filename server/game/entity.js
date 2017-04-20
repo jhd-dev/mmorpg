@@ -45,6 +45,24 @@ class Entity {
     updatePosition(){
         this.x += this.hspeed;
         this.y += this.vspeed;
+        if (this.hspeed === 0 && this.vspeed === 0){
+            this.x = Math.round(this.x);
+            this.y = Math.round(this.y);
+        }
+    }
+    
+    distanceTo(entity){
+        return Math.hypot(entity.x - this.x, entity.y - this.y);
+    }
+    
+    angleTo(entity){
+        return Math.atan2(entity.y - this.y, entity.x - this.x);
+    }
+    
+    follow(entity, speed = 1){
+        var angle = this.angleTo(entity);
+        this.hspeed = Math.cos(angle) * speed;
+        this.vspeed = Math.sin(angle) * speed;
     }
     
 }

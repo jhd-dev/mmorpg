@@ -3,7 +3,7 @@
 var config = require('../config/config');
 var Game = require('../game/game');
 
-var GAME = Game.init(['Player', 'Bullet']);
+var GAME = Game.init(['Player', 'Bullet', 'Enemy']);
 
 var SOCKETS = {};
 var fps = config.FPS;

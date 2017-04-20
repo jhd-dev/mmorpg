@@ -3,5 +3,10 @@
     ["latest", {
       "es2015": { "modules": false }
     }]
+  ],
+  "plugins": [
+    ["transform-strict-mode", {
+      "strict": true
+    }]
   ]
 }

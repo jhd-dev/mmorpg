@@ -26,7 +26,6 @@
     var gameCont = document.getElementById('game');
     
     var chatCont = document.getElementById('chat-cont');
-    var chatMessages = document.getElementById('chat-message-cont');
     var chatForm = document.getElementById('chat-form');
     var chatInput = document.getElementById('chat-input');
     
@@ -186,6 +185,21 @@
                 ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
                 ctx.fillStyle = 'black';
                 ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+            }
+        }
+        if (entities.Enemy){
+            for (var enemyId in entities.Enemy){
+                var enemy = entities.Enemy[enemyId];console.log(enemy);
+                updatePosition(enemy);
+                ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = '#922';
+                ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
+                ctx.fillStyle = 'red';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
+                ctx.fillStyle = 'black';
+                ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
             }
         }
     }

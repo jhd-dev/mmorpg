@@ -5,7 +5,9 @@ var User = require('../models/user');
 var pathToObjects = './';
 
 var Game = {
-        
+    
+    enemySpawnCounter: 0,
+    
     init: (gameClassNames) => {
         Game.objects = {};
         gameClassNames.forEach(className => {
@@ -26,6 +28,14 @@ var Game = {
     },
     
     update: () => {
+        if (Game.enemySpawnCounter % (8000 / 20) === 0 
+            && Object.keys(Game.objects.Enemy.instances).length < 3 
+            && Object.keys(Game.objects.Player.instances).length
+        ){
+            Game.create('Enemy', [Math.random() * 800, Math.random() * 600, 'Evil Monster', 10, 180]);
+        }
+        Game.enemySpawnCounter ++;
+        
         var pack = {
             entities: {}
         };
