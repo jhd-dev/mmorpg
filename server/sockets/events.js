@@ -43,10 +43,7 @@ module.exports = function(io){
         socket.id = player.id;
         SOCKETS[socket.id] = socket;
         socket.player = player;
-        socket.emit('init', {
-            entities: GAME.objects,
-            clientId: socket.id
-        });
+        socket.emit('init', GAME.getInitPack(socket));
         
         socket.on('disconnect', function(){
             console.log('removed socket');

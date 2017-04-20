@@ -64,14 +64,16 @@
     var socket = io();
     
     socket.on('init', function(data){
-        entities = data.entities;
+        entities = data.entities;console.log(entities);
         clientId = data.clientId;
         setInterval(update, 20);
     });
     
     socket.on('update', function(data){
-        entities = data.entities;
-        /*var objects = Object.keys(data.entities);
+        for (var removed of data.removed){
+            delete entities[removed.type][removed.id];
+        }
+        var objects = Object.keys(data.entities);
         for (var i = 0; i < objects.length; i ++){
             var objectType = objects[i];
             var instanceIds = Object.keys(data.entities[objectType]);
@@ -80,11 +82,15 @@
                 var changes = Object.keys(data.entities[objectType][instanceId]);
                 for (var k = 0; k < changes.length; k ++){
                     var changedProp = changes[k];
-                    var changedVal = data.entities[objectType][instanceId];
-                    entities[objectType][instanceId][changedProp] = changedVal;
+                    var changedVal = data.entities[objectType][instanceId][changedProp];
+                    if (!entities[objectType][instanceId]){
+                        entities[objectType][instanceId] = data.entities[objectType][instanceId];
+                    } else {
+                        entities[objectType][instanceId][changedProp] = changedVal;
+                    }
                 }
             }
-        }*/
+        }
     });
     
     socket.on('chatMsg', data => {
@@ -162,8 +168,8 @@
         ctx.clearRect(0, 0, width, height);
         drawMap();
         if (entities.Player){
-            for (var i = 0; i < entities.Player.length || 0; i ++){
-                var player = entities.Player[i];
+            for (let id in entities.Player){
+                var player = entities.Player[id];
                 updatePosition(player);
                 ctx.fillStyle = 'black';
                 ctx.fillText(player.name, player.x, player.y - 20);
@@ -179,8 +185,8 @@
             }
         }
         if (entities.Bullet){
-            for (i = 0; i < entities.Bullet.length || 0; i ++){
-                var bullet = entities.Bullet[i];
+            for (let id in entities.Bullet){
+                var bullet = entities.Bullet[id];
                 updatePosition(bullet);
                 ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
                 ctx.fillStyle = 'black';
@@ -188,18 +194,20 @@
             }
         }
         if (entities.Enemy){
-            for (var enemyId in entities.Enemy){
-                var enemy = entities.Enemy[enemyId];console.log(enemy);
-                updatePosition(enemy);
-                ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
-                ctx.fillStyle = '#922';
-                ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
-                ctx.fillStyle = 'black';
-                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
-                ctx.fillStyle = 'red';
-                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
-                ctx.fillStyle = 'black';
-                ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
+            for (let id in entities.Enemy){
+                var enemy = entities.Enemy[id];
+                if (enemy){
+                    updatePosition(enemy);
+                    ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                    ctx.fillStyle = '#922';
+                    ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                    ctx.fillStyle = 'black';
+                    ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
+                    ctx.fillStyle = 'black';
+                    ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
+                }
             }
         }
     }

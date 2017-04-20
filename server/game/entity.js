@@ -3,15 +3,30 @@
 class Entity {
     
     static update(){
-        return Object.keys(this.instances).map(id => {
+        var instances = {};
+        Object.keys(this.instances).forEach(id => {
             var entity = this.instances[id];
             entity.update();
             var clientEntity = {};
             this.clientFormat.forEach(key => {
                 clientEntity[key] = entity[key];
             });
-            return clientEntity;
+            instances[id] = clientEntity;
         });
+        return instances;
+    }
+    
+    static getClientPack(){
+        var instances = {};
+        Object.keys(this.instances).forEach(id => {
+            var entity = this.instances[id];
+            var clientEntity = {};
+            this.clientFormat.forEach(key => {
+                clientEntity[key] = entity[key];
+            });
+            instances[id] = clientEntity;
+        });
+        return instances;
     }
     
     static generateId(){
@@ -29,11 +44,13 @@ class Entity {
         this.y = y;
         this.hspeed = 0;
         this.vspeed = 0;
-        this.id = this.constructor.generateId();
+        this.id = this.constructor.generateId();//console.log(this.id);
         this.constructor.instances[this.id] = this;
+        this.exists = true;
     }
     
     destroy(){
+        this.exists = false;
         delete this.constructor.instances[this.id];
         //this.GAME.destroy(this);
     }

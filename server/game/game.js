@@ -6,6 +6,9 @@ var pathToObjects = './';
 
 var Game = {
     
+    prevPack: {
+        entities: {}
+    },
     enemySpawnCounter: 0,
     
     init: (gameClassNames) => {
@@ -28,6 +31,8 @@ var Game = {
     },
     
     update: () => {
+        var prevPack = Game.prevPack;
+        
         if (Game.enemySpawnCounter % (8000 / 20) === 0 
             && Object.keys(Game.objects.Enemy.instances).length < 3 
             && Object.keys(Game.objects.Player.instances).length
@@ -36,13 +41,50 @@ var Game = {
         }
         Game.enemySpawnCounter ++;
         
-        var pack = {
+        var newPack = {
             entities: {}
         };
-        Object.keys(Game.objects).forEach(className => {
-            pack.entities[className] = Game.objects[className].update();
+        var updatePack = {
+            entities: {},
+            removed: []
+        };
+        Object.keys(Game.objects).forEach(className => {//console.log(className);
+            newPack.entities[className] = Game.objects[className].update();
+            if (!prevPack.entities[className]){
+                prevPack.entities[className] = {};
+            }
+            Object.keys(prevPack.entities[className]).forEach(id => {//console.log(id);
+                if (newPack.entities[className][id]){
+                    for (var key in prevPack.entities[className][id]){
+                        if (prevPack.entities[className][id][key] !== newPack.entities[className][id][key]){
+                            if (!updatePack.entities[className]){
+                                updatePack.entities[className] = {};
+                            }
+                            if (!updatePack.entities[className][id]){
+                                updatePack.entities[className][id] = {};
+                            }
+                            updatePack.entities[className][id][key] = newPack.entities[className][id][key];
+                        }
+                    }
+                } else {
+                    updatePack.removed.push({
+                        type: className,
+                        id: id
+                    });
+                }
+            });
+            Object.keys(newPack.entities[className]).forEach(id => {//console.log(id);
+                if (!prevPack.entities[className][id]){
+                    if (!updatePack.entities[className]){
+                        updatePack.entities[className] = {};
+                    }
+                    updatePack.entities[className][id] = newPack.entities[className][id];
+                }
+            });
         });
-        return pack;
+        if (updatePack.removed.length) console.log(updatePack.removed);
+        Game.prevPack = newPack;
+        return updatePack;
     },
     
     create: (className, args = []) => {
@@ -75,6 +117,17 @@ var Game = {
                 callback('User not found', null);
             }
         });
+    },
+    
+    getInitPack: (socket) => {
+        var entities = {};
+        Object.keys(Game.objects).forEach(className => {
+            entities[className] = Game.objects[className].getClientPack();
+        });
+        return {
+            entities: entities,
+            clientId: socket.id
+        };
     }
     
 };

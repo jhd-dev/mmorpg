@@ -21,7 +21,9 @@ class Enemy extends Entity {
     update(){
         super.update();
         if (this.target){
-            this.follow(this.target, this.aggroSpeed);
+            if (this.target.exists){
+                this.follow(this.target, this.aggroSpeed);
+            }
         } else {
             this.detectTarget();
         }
@@ -37,6 +39,8 @@ class Enemy extends Entity {
     }
     
     detectTarget(){
+        this.hspeed = 0;
+        this.vspeed = 0;
         objectEach(this.GAME.objects.Player.instances, player => {
             if (!this.player && this.distanceTo(player) < this.aggroRange){
                 this.target = player;
