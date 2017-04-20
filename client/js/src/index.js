@@ -10,12 +10,13 @@
     var downKey = 83;
     
     var app = new Vue({
-        el: '#chat-cont',
+        el: '#game',
         data: {
             messages: [{
                 type: 'info',
                 msg: 'Welcome to the game!'
-            }]
+            }],
+            items: []
         }
     });
     
@@ -64,7 +65,8 @@
     var socket = io();
     
     socket.on('init', function(data){
-        entities = data.entities;console.log(entities);
+        entities = data.entities;
+        console.log(entities);
         clientId = data.clientId;
         setInterval(update, 20);
     });
@@ -91,6 +93,7 @@
                 }
             }
         }
+        app.$set(app, 'items', data.inventory.items);
     });
     
     socket.on('chatMsg', data => {
@@ -196,18 +199,16 @@
         if (entities.Enemy){
             for (let id in entities.Enemy){
                 var enemy = entities.Enemy[id];
-                if (enemy){
-                    updatePosition(enemy);
-                    ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
-                    ctx.fillStyle = '#922';
-                    ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
-                    ctx.fillStyle = 'black';
-                    ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
-                    ctx.fillStyle = 'red';
-                    ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
-                    ctx.fillStyle = 'black';
-                    ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
-                }
+                updatePosition(enemy);
+                ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = '#922';
+                ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
+                ctx.fillStyle = 'red';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
+                ctx.fillStyle = 'black';
+                ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
             }
         }
     }

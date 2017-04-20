@@ -82,7 +82,6 @@ var Game = {
                 }
             });
         });
-        if (updatePack.removed.length) console.log(updatePack.removed);
         Game.prevPack = newPack;
         return updatePack;
     },

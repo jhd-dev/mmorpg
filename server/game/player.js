@@ -1,6 +1,7 @@
 'use strict';
 
 var Entity = require('./entity');
+var Inventory = require('./inventory');
 
 var rightKey = 68;
 var upKey = 87;
@@ -40,6 +41,12 @@ class Player extends Entity {
         this.maxSpeed = 2;
         this.maxHp = 10;
         this.hp = this.maxHp;
+        this.inventory = new Inventory(this);
+    }
+    
+    destroy(){
+        delete this.inventory;
+        super.destroy();
     }
     
     update(){

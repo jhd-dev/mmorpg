@@ -80,6 +80,7 @@ module.exports = function(io){
     setInterval(function(){
         var pack = GAME.update();
         eachSocket(socket => {
+            pack.inventory = socket.player.inventory.getClientPack();
             socket.emit('update', pack);
         });
     }, 1000 / fps);

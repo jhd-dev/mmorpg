@@ -23,6 +23,8 @@ class Enemy extends Entity {
         if (this.target){
             if (this.target.exists){
                 this.follow(this.target, this.aggroSpeed);
+            } else {
+                this.target = null;
             }
         } else {
             this.detectTarget();

@@ -47,6 +47,7 @@ input {
 }
 
 #chat-input {
+    display: inline-block;
     border: 0;
     background-color: inherit;
 }
@@ -60,11 +61,23 @@ input {
     background-color: #ddd;
 }
 
-/*#chat-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    opacity: 0.8;
-}*/
+#inventory-cont {
+    display: inline-table;
+    background-color: #eee;
+    color: #000;
+    text-align: left;
+}
+
+#inventory {
+    display: table-cell;
+    vertical-align: bottom;
+    padding: 4px 0 0 4px;
+    height: 596px;
+}
+
+.inventory-item {
+    display: inline-block;
+}
 
 #sidebar {
     float: right;

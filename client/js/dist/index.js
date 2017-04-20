@@ -1,2 +1,327 @@
-!function(t){function e(i){if(n[i])return n[i].exports;var c=n[i]={i:i,l:!1,exports:{}};return t[i].call(c.exports,c,c.exports,e),c.l=!0,c.exports}var n={};e.m=t,e.c=n,e.i=function(t){return t},e.d=function(t,n,i){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:i})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="/dist/",e(e.s=0)}([function(module,exports,__webpack_require__){"use strict";!function(io,Vue){function update(){if(ctx.clearRect(0,0,width,height),drawMap(),entities.Player)for(var t in entities.Player){var e=entities.Player[t];updatePosition(e),ctx.fillStyle="black",ctx.fillText(e.name,e.x,e.y-20),ctx.strokeRect(e.x-8,e.y-8,16,16),ctx.fillStyle=e.color,ctx.fillRect(e.x-8,e.y-8,16,16),ctx.fillStyle="black",ctx.fillRect(e.x-12,e.y-16,24,4),ctx.fillStyle="red",ctx.fillRect(e.x-12,e.y-16,24*e.hp/e.maxHp,4)}if(entities.Bullet)for(var n in entities.Bullet){var i=entities.Bullet[n];updatePosition(i),ctx.strokeRect(i.x-8,i.y-8,16,16),ctx.fillStyle="black",ctx.fillRect(i.x-8,i.y-8,16,16)}if(entities.Enemy)for(var c in entities.Enemy){var o=entities.Enemy[c];o&&(updatePosition(o),ctx.strokeRect(o.x-8,o.y-8,16,16),ctx.fillStyle="#922",ctx.fillRect(o.x-8,o.y-8,16,16),ctx.fillStyle="black",ctx.fillRect(o.x-12,o.y-16,24,4),ctx.fillStyle="red",ctx.fillRect(o.x-12,o.y-16,24*o.hp/o.maxHp,4),ctx.fillStyle="black",ctx.fillText(o.name,o.x,o.y-20))}}function drawMap(){for(var t=0;t<width;t+=480)for(var e=0;e<height;e+=480)ctx.drawImage(background,t,e,480,480)}function updatePosition(t){t.x+=t.hspeed/2,t.y+=t.vspeed/2}var width=800,height=600,rightKey=68,upKey=87,leftKey=65,downKey=83,app=new Vue({el:"#chat-cont",data:{messages:[{type:"info",msg:"Welcome to the game!"}]}}),canvas=document.getElementById("viewport"),ctx=canvas.getContext("2d");ctx.textAlign="center";for(var gameCont=document.getElementById("game"),chatCont=document.getElementById("chat-cont"),chatForm=document.getElementById("chat-form"),chatInput=document.getElementById("chat-input"),textboxFocused=!1,textboxes=[chatInput],i=0;i<textboxes.length;i++)textboxes[i].onfocus=function(){textboxFocused=!0},textboxes[i].onblur=function(){textboxFocused=!1};var entities={players:[],bullets:[]},clientId="",background=new Image;background.src="../img/grass.png";var commands={help:function(){app.messages.push({type:"info",msg:"Commands:\n/help - List all commands"})},debug:function debug(variable){socket.emit("clientDebug",variable+": "+eval(variable))}},socket=io();socket.on("init",function(t){entities=t.entities,console.log(entities),clientId=t.clientId,setInterval(update,20)}),socket.on("update",function(t){var e=!0,n=!1,i=void 0;try{for(var c,o=t.removed[Symbol.iterator]();!(e=(c=o.next()).done);e=!0){var a=c.value;delete entities[a.type][a.id]}}catch(t){n=!0,i=t}finally{try{!e&&o.return&&o.return()}finally{if(n)throw i}}for(var l=Object.keys(t.entities),r=0;r<l.length;r++)for(var s=l[r],u=Object.keys(t.entities[s]),f=0;f<u.length;f++)for(var x=u[f],d=Object.keys(t.entities[s][x]),y=0;y<d.length;y++){var p=d[y],m=t.entities[s][x][p];entities[s][x]?entities[s][x][p]=m:entities[s][x]=t.entities[s][x]}}),socket.on("chatMsg",function(t){app.messages=app.messages.concat([t])}),document.onkeydown=function(t){textboxFocused||(socket.emit("keyDown",{key:t.keyCode}),-1!==[68,87,65,83].indexOf(t.keyCode)&&t.preventDefault(),84===t.keyCode&&(chatInput.focus(),t.preventDefault()),191===t.keyCode&&chatInput.focus())},document.onkeyup=function(t){socket.emit("keyUp",{key:t.keyCode})},canvas.onclick=function(t){var e=canvas.getBoundingClientRect();socket.emit("click",{x:t.clientX-e.left,y:t.clientY-e.top})},gameCont.oncontextmenu=function(t){t.preventDefault()},chatCont.onclick=function(t){chatInput.focus()},chatForm.onsubmit=function(t){var e=chatInput.value;if("/"===e.charAt(0)){var n=e.substr(1).split(" ");commands[n[0]]?commands[n[0]].apply(null,n.slice(1)):socket.emit("chatMsg",e.substr(0,140))}else socket.emit("chatMsg",e.substr(0,140));chatInput.blur(),chatInput.value="",textboxFocused=!1,t.preventDefault()}}(io,Vue)}]);
-//# sourceMappingURL=index.js.map
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/dist/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+(function (io, Vue) {
+    'use strict';
+
+    var width = 800;
+    var height = 600;
+
+    var rightKey = 68;
+    var upKey = 87;
+    var leftKey = 65;
+    var downKey = 83;
+
+    var app = new Vue({
+        el: '#game',
+        data: {
+            messages: [{
+                type: 'info',
+                msg: 'Welcome to the game!'
+            }],
+            items: []
+        }
+    });
+
+    var canvas = document.getElementById('viewport');
+    var ctx = canvas.getContext('2d');
+    ctx.textAlign = 'center';
+
+    var gameCont = document.getElementById('game');
+
+    var chatCont = document.getElementById('chat-cont');
+    var chatForm = document.getElementById('chat-form');
+    var chatInput = document.getElementById('chat-input');
+
+    var textboxFocused = false;
+    var textboxes = [chatInput];
+    for (var i = 0; i < textboxes.length; i++) {
+        textboxes[i].onfocus = function () {
+            textboxFocused = true;
+        };
+        textboxes[i].onblur = function () {
+            textboxFocused = false;
+        };
+    }
+
+    var entities = {
+        players: [],
+        bullets: []
+    };
+    var clientId = '';
+
+    var background = new Image();
+    background.src = '../img/grass.png';
+
+    var commands = {
+        help: function help() {
+            app.messages.push({
+                type: 'info',
+                msg: 'Commands:\n/help - List all commands'
+            });
+        },
+        debug: function debug(variable) {
+            socket.emit('clientDebug', variable + ': ' + eval(variable));
+        }
+    };
+
+    var socket = io();
+
+    socket.on('init', function (data) {
+        entities = data.entities;
+        console.log(entities);
+        clientId = data.clientId;
+        setInterval(update, 20);
+    });
+
+    socket.on('update', function (data) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+            for (var _iterator = data.removed[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var removed = _step.value;
+
+                delete entities[removed.type][removed.id];
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
+                }
+            } finally {
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+
+        var objects = Object.keys(data.entities);
+        for (var i = 0; i < objects.length; i++) {
+            var objectType = objects[i];
+            var instanceIds = Object.keys(data.entities[objectType]);
+            for (var j = 0; j < instanceIds.length; j++) {
+                var instanceId = instanceIds[j];
+                var changes = Object.keys(data.entities[objectType][instanceId]);
+                for (var k = 0; k < changes.length; k++) {
+                    var changedProp = changes[k];
+                    var changedVal = data.entities[objectType][instanceId][changedProp];
+                    if (!entities[objectType][instanceId]) {
+                        entities[objectType][instanceId] = data.entities[objectType][instanceId];
+                    } else {
+                        entities[objectType][instanceId][changedProp] = changedVal;
+                    }
+                }
+            }
+        }
+        app.$set(app, 'items', data.inventory.items);
+    });
+
+    socket.on('chatMsg', function (data) {
+        app.messages = app.messages.concat([data]);
+    });
+
+    document.onkeydown = function (e) {
+        if (!textboxFocused) {
+            socket.emit('keyDown', {
+                key: e.keyCode
+            });
+            if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1) {
+                e.preventDefault();
+            }
+            if (e.keyCode === 84) {
+                chatInput.focus();
+                e.preventDefault();
+            }
+            if (e.keyCode === 191) {
+                chatInput.focus();
+            }
+        }
+    };
+
+    document.onkeyup = function (e) {
+        socket.emit('keyUp', {
+            key: e.keyCode
+        });
+    };
+
+    /*document.getElementById('login-form').onsubmit = function(e){
+        socket.emit('login', {
+            username: 'porygonj',
+            password: 'abcd1234'
+        });
+        e.preventDefault();
+    };*/
+
+    canvas.onclick = function (e) {
+        var rect = canvas.getBoundingClientRect();
+        socket.emit('click', {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+    };
+
+    gameCont.oncontextmenu = function (e) {
+        e.preventDefault();
+    };
+
+    chatCont.onclick = function (e) {
+        chatInput.focus();
+    };
+
+    chatForm.onsubmit = function (e) {
+        var message = chatInput.value;
+        if (message.charAt(0) === '/') {
+            var inputs = message.substr(1).split(' ');
+            if (commands[inputs[0]]) {
+                commands[inputs[0]].apply(null, inputs.slice(1));
+            } else {
+                socket.emit('chatMsg', message.substr(0, 140));
+            }
+        } else {
+            socket.emit('chatMsg', message.substr(0, 140));
+        }
+        chatInput.blur();
+        chatInput.value = '';
+        textboxFocused = false;
+        e.preventDefault();
+    };
+
+    function update() {
+        ctx.clearRect(0, 0, width, height);
+        drawMap();
+        if (entities.Player) {
+            for (var id in entities.Player) {
+                var player = entities.Player[id];
+                updatePosition(player);
+                ctx.fillStyle = 'black';
+                ctx.fillText(player.name, player.x, player.y - 20);
+                ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
+                ctx.fillStyle = player.color;
+                ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+                //if (id === clientId){
+                ctx.fillStyle = 'black';
+                ctx.fillRect(player.x - 12, player.y - 16, 24, 4);
+                ctx.fillStyle = 'red';
+                ctx.fillRect(player.x - 12, player.y - 16, 24 * player.hp / player.maxHp, 4);
+                //}
+            }
+        }
+        if (entities.Bullet) {
+            for (var _id in entities.Bullet) {
+                var bullet = entities.Bullet[_id];
+                updatePosition(bullet);
+                ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+            }
+        }
+        if (entities.Enemy) {
+            for (var _id2 in entities.Enemy) {
+                var enemy = entities.Enemy[_id2];
+                updatePosition(enemy);
+                ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = '#922';
+                ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
+                ctx.fillStyle = 'red';
+                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
+                ctx.fillStyle = 'black';
+                ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
+            }
+        }
+    }
+
+    function drawMap() {
+        for (var x = 0; x < width; x += 480) {
+            for (var y = 0; y < height; y += 480) {
+                ctx.drawImage(background, x, y, 480, 480);
+            }
+        }
+    }
+
+    function updatePosition(entity) {
+        entity.x += entity.hspeed / 2;
+        entity.y += entity.vspeed / 2;
+    }
+})(io, Vue);
+
+/***/ })
+/******/ ]);

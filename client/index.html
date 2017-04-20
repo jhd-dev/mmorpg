@@ -19,12 +19,18 @@
                                     <div v-else class="chat-message">{{message.name}}: {{message.msg}}</div>
                                 </template>
                             </div>
-                            <form id="chat-form" autocomplete="off">
-                                &gt; <input id="chat-input" type="text" name="message" placeholder="Press 'T' to chat" /><input id="chat-submit" type="submit" value="Send" />
+                            <form id="chat-form" autocomplete="off"><!--
+                                -->&gt; <input id="chat-input" type="text" name="message" placeholder="Press 'T' to chat" /><input id="chat-submit" type="submit" value="Send" />
                             </form>
                         </div>
                     </div>
                     <canvas id="viewport" width="800" height="600"></canvas>
+                    <div id="inventory-cont">
+                        <div id="inventory">
+                            <h3 class="inventory-head">Inventory</h3>
+                            <div v-for="item in items" class="inventory-item">{{item.type}}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="sidebar">
