@@ -1,9 +1,10 @@
 'use strict';
 
 var config = require('../config/config');
+var maps = require('../config/maps');
 var Game = require('../game/game');
 
-var GAME = Game.init(['Player', 'Bullet', 'Enemy']);
+var GAME = new Game(['Player', 'Bullet', 'Enemy']);
 
 var SOCKETS = {};
 var fps = config.FPS;

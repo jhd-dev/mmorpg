@@ -4,42 +4,43 @@ var User = require('../models/user');
 
 var pathToObjects = './';
 
-var Game = {
+class Game {
     
-    prevPack: {
-        entities: {}
-    },
-    enemySpawnCounter: 0,
-    
-    init: (gameClassNames) => {
-        Game.objects = {};
+    constructor(gameClassNames = [], maps = {}){
+        this.objects = {};
         gameClassNames.forEach(className => {
-            Game.objects[className] = require(pathToObjects + className.toLowerCase());
-            Game.objects[className].GAME = Game;
-            Game.objects[className].instances = {};
+            this.objects[className] = require(pathToObjects + className.toLowerCase());
+            this.objects[className].GAME = this;
+            this.objects[className].instances = {};
         });
-        return Game;
-    },
-    
-    connect: (socket) => {
-        return Game.objects.Player.connect(socket);
-    },
-    
-    disconnect: (socket) => {
-        Game.saveUser(socket);
-        return Game.objects.Player.disconnect(socket);
-    },
-    
-    update: () => {
-        var prevPack = Game.prevPack;
         
-        if (Game.enemySpawnCounter % (8000 / 20) === 0 
-            && Object.keys(Game.objects.Enemy.instances).length < 3 
-            && Object.keys(Game.objects.Player.instances).length
+        this.maps = Object.keys(maps).reduce((acc, name) => new Map(name, maps[name].grid, maps[name].tileSize), {});
+        
+        this.prevPack = {
+            entities: {}
+        };
+        this.enemySpawnCounter = 0;
+    }
+    
+    connect (socket){
+        return this.objects.Player.connect(socket);
+    }
+    
+    disconnect(socket){
+        this.saveUser(socket);
+        return this.objects.Player.disconnect(socket);
+    }
+    
+    update(){
+        var prevPack = this.prevPack;
+        
+        if (this.enemySpawnCounter % (8000 / 20) === 0 
+            && Object.keys(this.objects.Enemy.instances).length < 3 
+            && Object.keys(this.objects.Player.instances).length
         ){
-            Game.create('Enemy', [Math.random() * 800, Math.random() * 600, 'Evil Monster', 10, 180]);
+            this.create('Enemy', [Math.random() * 800, Math.random() * 600, 'Evil Monster', 10, 180]);
         }
-        Game.enemySpawnCounter ++;
+        this.enemySpawnCounter ++;
         
         var newPack = {
             entities: {}
@@ -48,8 +49,8 @@ var Game = {
             entities: {},
             removed: []
         };
-        Object.keys(Game.objects).forEach(className => {//console.log(className);
-            newPack.entities[className] = Game.objects[className].update();
+        Object.keys(this.objects).forEach(className => {//console.log(className);
+            newPack.entities[className] = this.objects[className].update();
             if (!prevPack.entities[className]){
                 prevPack.entities[className] = {};
             }
@@ -82,15 +83,15 @@ var Game = {
                 }
             });
         });
-        Game.prevPack = newPack;
+        this.prevPack = newPack;
         return updatePack;
-    },
+    }
     
-    create: (className, args = []) => {
-        return new Game.objects[className](Game, ...args);
-    },
+    create(className, args = []){
+        return new this.objects[className](this, ...args);
+    }
     
-    saveUser: (socket) => {
+    saveUser(socket){
         var player = socket.player;
         User.findOne({
             username: player.name,
@@ -100,9 +101,9 @@ var Game = {
         }, (err, user) => {
             if (err) throw err;
         });
-    },
+    }
     
-    loadUser: (username, password, callback) => {
+    loadUser(username, password, callback){
         User.findOne({
             username
         }, (err, user) => {
@@ -116,12 +117,12 @@ var Game = {
                 callback('User not found', null);
             }
         });
-    },
+    }
     
-    getInitPack: (socket) => {
+    getInitPack(socket){
         var entities = {};
-        Object.keys(Game.objects).forEach(className => {
-            entities[className] = Game.objects[className].getClientPack();
+        Object.keys(this.objects).forEach(className => {
+            entities[className] = this.objects[className].getClientPack();
         });
         return {
             entities: entities,
@@ -129,6 +130,6 @@ var Game = {
         };
     }
     
-};
+}
 
 module.exports = Game;
