@@ -1,4 +1,4 @@
-(function(io, Vue){
+(function(io, $, Vue){
     'use strict';
     
     var width = 800;
@@ -24,22 +24,7 @@
     var ctx = canvas.getContext('2d');
     ctx.textAlign = 'center';
     
-    var gameCont = document.getElementById('game');
-    
-    var chatCont = document.getElementById('chat-cont');
-    var chatForm = document.getElementById('chat-form');
-    var chatInput = document.getElementById('chat-input');
-    
     var textboxFocused = false;
-    var textboxes = [chatInput];
-    for (var i = 0; i < textboxes.length; i ++){
-        textboxes[i].onfocus = function(){
-            textboxFocused = true;
-        };
-        textboxes[i].onblur = function(){
-            textboxFocused = false;
-        };
-    }
     
     var entities = {
         players: [],
@@ -50,7 +35,7 @@
     var background = new Image();
     background.src = '../img/grass.png';
     
-    var commands = {
+    const commands = {
         help: function(){
             app.messages.push({
                 type: 'info',
@@ -100,90 +85,95 @@
         app.messages = app.messages.concat([data]);
     });
     
-    document.onkeydown = function(e){
-        if (!textboxFocused){
-            socket.emit('keyDown', {
+    $(document)
+        .ready(function(){
+            
+            $('#viewport').on("click", function(e){
+                var rect = canvas.getBoundingClientRect();
+                socket.emit('click', {
+                    x: e.clientX - rect.left - width / 2 + entities.Player[clientId].x,
+                    y: e.clientY - rect.top - height / 2 + entities.Player[clientId].y
+                });
+            });
+            
+            $('#game-cont').on('contextmenu', function(e){
+                e.preventDefault();
+            });
+            
+            $('#chat-input, .login-input')
+                .on("focus", function(){
+                    textboxFocused = true;
+                })
+                .on("blur", function(){
+                    textboxFocused = false;
+                });
+            
+            $('#chat-cont').on('click', function(e){
+                $('#chat-input').focus();
+            });
+            
+            $('#chat-form').on('submit', function(e){
+                var message = $('#chat-input').value();
+                if (message.charAt(0) === '/'){
+                    var inputs = message.substr(1).split(' ');
+                    if (commands[inputs[0]]){
+                        commands[inputs[0]].apply(null, inputs.slice(1));
+                    } else {
+                        socket.emit('chatMsg', message.substr(0, 140));
+                    }
+                } else {
+                    socket.emit('chatMsg', message.substr(0, 140));
+                }
+                $('#chat-input').blur();
+                $('#chat-input').value('');
+                textboxFocused = false;
+                e.preventDefault();
+            });
+            
+        })
+        .on('keydown', function(e){
+            if (!textboxFocused){
+                socket.emit('keyDown', {
+                    key: e.keyCode
+                });
+                if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1){
+                    e.preventDefault();
+                }
+                if (e.keyCode === 84){
+                    $('#chat-input').focus();
+                    e.preventDefault();
+                }
+                if (e.keyCode === 191){
+                    $('#chat-input').focus();
+                }
+            }
+        })
+        .on('keyup', function(e){
+            socket.emit('keyUp', {
                 key: e.keyCode
             });
-            if ([rightKey, upKey, leftKey, downKey].indexOf(e.keyCode) !== -1){
-                e.preventDefault();
-            }
-            if (e.keyCode === 84){
-                chatInput.focus();
-                e.preventDefault();
-            }
-            if (e.keyCode === 191){
-                chatInput.focus();
-            }
-        }
-    };
-    
-    document.onkeyup = function(e){
-        socket.emit('keyUp', {
-            key: e.keyCode
         });
-    };
-    
-    /*document.getElementById('login-form').onsubmit = function(e){
-        socket.emit('login', {
-            username: 'porygonj',
-            password: 'abcd1234'
-        });
-        e.preventDefault();
-    };*/
-    
-    canvas.onclick = function(e){
-        var rect = canvas.getBoundingClientRect();
-        socket.emit('click', {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
-    };
-    
-    gameCont.oncontextmenu = function(e){
-        e.preventDefault();
-    };
-    
-    chatCont.onclick = function(e){
-        chatInput.focus();
-    };
-    
-    chatForm.onsubmit = function(e){
-        var message = chatInput.value;
-        if (message.charAt(0) === '/'){
-            var inputs = message.substr(1).split(' ');
-            if (commands[inputs[0]]){
-                commands[inputs[0]].apply(null, inputs.slice(1));
-            } else {
-                socket.emit('chatMsg', message.substr(0, 140));
-            }
-        } else {
-            socket.emit('chatMsg', message.substr(0, 140));
-        }
-        chatInput.blur();
-        chatInput.value = '';
-        textboxFocused = false;
-        e.preventDefault();
-    };
-    
     
     function update(){
         ctx.clearRect(0, 0, width, height);
         drawMap();
         if (entities.Player){
             for (let id in entities.Player){
-                var player = entities.Player[id];
+                let player = entities.Player[id];
                 updatePosition(player);
+                let coors = getRelativeCoors([player.x, player.y]);
+                let x = coors[0];
+                let y = coors[1];
                 ctx.fillStyle = 'black';
-                ctx.fillText(player.name, player.x, player.y - 20);
-                ctx.strokeRect(player.x - 8, player.y - 8, 16, 16);
+                ctx.fillText(player.name, x, y - 20);
+                ctx.strokeRect(x - 8, y - 8, 16, 16);
                 ctx.fillStyle = player.color;
-                ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+                ctx.fillRect(x - 8, y - 8, 16, 16);
                 //if (id === clientId){
                     ctx.fillStyle = 'black';
-                    ctx.fillRect(player.x - 12, player.y - 16, 24, 4);
+                    ctx.fillRect(x - 12, y - 16, 24, 4);
                     ctx.fillStyle = 'red';
-                    ctx.fillRect(player.x - 12, player.y - 16, 24 * player.hp / player.maxHp, 4);
+                    ctx.fillRect(x - 12, y - 16, 24 * player.hp / player.maxHp, 4);
                 //}
             }
         }
@@ -191,34 +181,47 @@
             for (let id in entities.Bullet){
                 var bullet = entities.Bullet[id];
                 updatePosition(bullet);
-                ctx.strokeRect(bullet.x - 8, bullet.y - 8, 16, 16);
+                let coors = getRelativeCoors([bullet.x, bullet.y]);
+                let x = coors[0];
+                let y = coors[1];
+                ctx.strokeRect(x - 8, y - 8, 16, 16);
                 ctx.fillStyle = 'black';
-                ctx.fillRect(bullet.x - 8, bullet.y - 8, 16, 16);
+                ctx.fillRect(x - 8, y - 8, 16, 16);
             }
         }
         if (entities.Enemy){
             for (let id in entities.Enemy){
-                var enemy = entities.Enemy[id];
+                let enemy = entities.Enemy[id];
                 updatePosition(enemy);
-                ctx.strokeRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                let coors = getRelativeCoors([enemy.x, enemy.y]);
+                let x = coors[0];
+                let y = coors[1];
+                ctx.strokeRect(x - 8, y - 8, 16, 16);
                 ctx.fillStyle = '#922';
-                ctx.fillRect(enemy.x - 8, enemy.y - 8, 16, 16);
+                ctx.fillRect(x - 8, y - 8, 16, 16);
                 ctx.fillStyle = 'black';
-                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24, 4);
+                ctx.fillRect(x - 12, y - 16, 24, 4);
                 ctx.fillStyle = 'red';
-                ctx.fillRect(enemy.x - 12, enemy.y - 16, 24 * enemy.hp / enemy.maxHp, 4);
+                ctx.fillRect(x - 12, y - 16, 24 * enemy.hp / enemy.maxHp, 4);
                 ctx.fillStyle = 'black';
-                ctx.fillText(enemy.name, enemy.x, enemy.y - 20);
+                ctx.fillText(enemy.name, x, y - 20);
             }
         }
     }
     
     function drawMap(){
+        var coors = getRelativeCoors([0, 0]);
+        var left = coors[0];
+        var top = coors[1];
         for (var x = 0; x < width; x += 480){
             for (var y = 0; y < height; y += 480){
-                ctx.drawImage(background, x, y, 480, 480);
+                ctx.drawImage(background, left + x, top + y, 480, 480);
             }
         }
+    }
+    
+    function getRelativeCoors(coors){
+        return [coors[0] - entities.Player[clientId].x + width / 2, coors[1] - entities.Player[clientId].y + height / 2];
     }
     
     function updatePosition(entity){
@@ -226,4 +229,4 @@
         entity.y += entity.vspeed / 2;
     }
     
-})(io, Vue);
+})(io, jQuery, Vue);
