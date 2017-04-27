@@ -85,6 +85,10 @@
         app.messages = app.messages.concat([data]);
     });
     
+    $.getJSON(window.location.host + '/api/user', {}, function(user){
+        alert(user);
+    });
+    
     $(document)
         .ready(function(){
             
@@ -113,7 +117,8 @@
             });
             
             $('#chat-form').on('submit', function(e){
-                var message = $('#chat-input').value();
+                e.preventDefault();
+                var message = $('#chat-input').val();
                 if (message.charAt(0) === '/'){
                     var inputs = message.substr(1).split(' ');
                     if (commands[inputs[0]]){
@@ -125,9 +130,9 @@
                     socket.emit('chatMsg', message.substr(0, 140));
                 }
                 $('#chat-input').blur();
-                $('#chat-input').value('');
+                $('#chat-input').val('');
                 textboxFocused = false;
-                e.preventDefault();
+                
             });
             
         })

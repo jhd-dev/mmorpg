@@ -43,4 +43,24 @@ module.exports = function(passport){
 			});
 		});
 	}));
+	
+	passport.use('local-login', new LocalStrategy({
+		usernameField: 'username',
+		passwordField: 'password',
+		passReqToCallback: true
+	}, function(req, username, password, done){
+		User.findOne({
+			'local.username': username
+		}, function(err, user){
+			if (err) throw err;
+			
+			if (!user){
+				return done(null, false);
+			} else if (user.validPassword(password)){console.log('login!');
+				return done(null, user);
+			} else {
+				return done(null, false);
+			}
+		});
+	}));
 };

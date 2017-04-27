@@ -1,40 +1,46 @@
 'use strict';
 
-var bodyParser = require('body-parser');
-var User = require('../models/user');
+var express = require('express');
 
-module.exports = function(app, passport){
+function isLoggedIn (target){
+	var redirect = '/login' + (target ? "?target=" : "");
+	return function(req, res, next) {
+		if (req.isAuthenticated()) {
+			return next();
+		} else {
+			res.redirect(redirect);
+		}
+	};
+}
+
+module.exports = function(passport){
+    var router = new express.Router();
     
-    app.get('/', function(req, res){
+    router.get('/', function(req, res){
         res.sendFile(__dirname + '/client/index.html');
     });
     
-    app.post('/signup', passport.authenticate('local-signup', {
+    router.post('/signup', passport.authenticate('local-signup', {
         successRedirect: '/',
-        failureRedirect: '/fail'
+        failureRedirect: '/login-fail'
     }));
     
-    app.get('/login', function(req, res){
-        User.findOne({
-            username: req.body.username,
-            password: req.body.password
-        }, function(err, user){
-            if (err) throw err;
-        });
+    router.post('/login', passport.authenticate('local-login', {
+        successRedirect: '/',
+        failureRedirect: '/login-fail'
+    }));
+    
+    router.get('/api/user', function(req, res){
+        if (req.isAuthenticated()){
+            res.json({
+                logged_in: true
+            });
+        } else {
+            res.json({
+                logged_in: false
+            });
+        }
     });
-    
-    app.get('/auth/local', function(req, res){
-        
-    })
-    
-    function isLoggedIn (target){
-		var redirect = '/login' + (target ? "?target=" : "");
-		return function(req, res, next) {
-			if (req.isAuthenticated()) {
-				return next();
-			} else {
-				res.redirect(redirect);
-			}
-		};
-	}
+	
+	return router;
 };

@@ -10,7 +10,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 var config = require('./server/config/config');
-var routes = require('./server/routes/router');
+var router = require('./server/routes/router');
 var events = require('./server/sockets/events');
 
 require('./server/config/passport')(passport);
@@ -34,7 +34,7 @@ app.use(passport.session());
 
 app.use(bodyParser());
 
-routes(app, passport);
+app.use(router(passport));
 
 var server = http.Server(app);
 server.listen(config.PORT, function(){
