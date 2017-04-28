@@ -85,9 +85,9 @@
         app.messages = app.messages.concat([data]);
     });
     
-    $.getJSON(window.location.host + '/api/user', {}, function(user){
+    /*$.getJSON(window.location.host + '/api/user', {}, function(user){
         alert(user);
-    });
+    });*/
     
     $(document)
         .ready(function(){

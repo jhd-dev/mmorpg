@@ -41,9 +41,17 @@ module.exports = function(io){
         console.log('new socket');
         
         var player = GAME.connect(socket);
+        //console.log(player);
         socket.id = player.id;
         SOCKETS[socket.id] = socket;
         socket.player = player;
+        console.log(socket.request.user);
+        if (socket.request.user){
+            var user = socket.request.user;
+            player.name = user.local.username;
+            player.x = user.x;
+            player.y = user.y;
+        }
         socket.emit('init', GAME.getInitPack(socket));
         
         socket.on('disconnect', function(){

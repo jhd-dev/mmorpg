@@ -8,7 +8,9 @@ var fs = require('fs');
 var profiler = require('v8-profiler');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var passportSocketIo = require('passport.socketio');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var config = require('./server/config/config');
 var router = require('./server/routes/router');
 var events = require('./server/sockets/events');
@@ -18,21 +20,28 @@ require('./server/config/passport')(passport);
 mongoose.connect(config.MONGO_URI);
 mongoose.Promise = global.Promise;
 
+var sessionStorage = new session.MemoryStore();
+
 var app = express();
 
 app.use('/', express.static(__dirname + '/client'));
 app.use('/shared', express.static(__dirname + '/shared'));
 
+app.use(cookieParser());
+app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(session({
     secret: 'secret',
-    resave: false,
-    saveUninitialized: true
+    resave: true,
+    saveUninitialized: true,
+    key: 'express.sid',
+    store: sessionStorage
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(bodyParser());
 
 app.use(router(passport));
 
@@ -42,6 +51,13 @@ server.listen(config.PORT, function(){
 });
 
 var io = require('socket.io')(server, {});
+io.use(passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: 'express.sid',
+    secret: 'secret',
+    store: sessionStorage
+}));
+
 events(io);
 
 profiler.startProfiling('1', true);
