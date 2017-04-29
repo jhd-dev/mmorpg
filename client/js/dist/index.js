@@ -188,7 +188,7 @@
 
     $(document).ready(function () {
 
-        $('#viewport').on("click", function (e) {
+        $('#viewport').on('click', function (e) {
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
                 x: e.clientX - rect.left - width / 2 + entities.Player[clientId].x,
@@ -300,6 +300,18 @@
                 ctx.fillRect(_x2 - 12, _y2 - 16, 24 * enemy.hp / enemy.maxHp, 4);
                 ctx.fillStyle = 'black';
                 ctx.fillText(enemy.name, _x2, _y2 - 20);
+            }
+        }
+        if (entities.ItemDrop) {
+            for (var _id3 in entities.ItemDrop) {
+                var itemDrop = entities.ItemDrop[_id3];
+                updatePosition(itemDrop);
+                var _coors3 = getRelativeCoors([itemDrop.x, itemDrop.y]);
+                var _x3 = _coors3[0];
+                var _y3 = _coors3[1];
+                ctx.strokeRect(_x3 - 8, _y3 - 8, 16, 16);
+                ctx.fillStyle = 'pink';
+                ctx.fillRect(_x3 - 8, _y3 - 8, 16, 16);
             }
         }
     }

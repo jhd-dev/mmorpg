@@ -103,22 +103,6 @@ class Game {
         });
     }
     
-    loadUser(username, password, callback){
-        User.findOne({
-            username
-        }, (err, user) => {
-            if (err) throw err;
-            
-            if (user){
-                if (user.password === password){
-                    callback('', user);
-                }
-            } else {
-                callback('User not found', null);
-            }
-        });
-    }
-    
     getInitPack(socket){
         var entities = {};
         Object.keys(this.objects).forEach(className => {

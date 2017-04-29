@@ -37,14 +37,25 @@ class Entity {
         return id;
     }
     
-    constructor(GAME, x = 0, y = 0){
+    static each(callback){
+        return Object.keys(this.instances).map((id, i, arr) => callback(this.instances[id], id, arr));
+    }
+    
+    static get instanceList(){
+        return Object.keys(this.instances).map(id => this.instances[id]);
+    }
+    
+    constructor(GAME, x = 0, y = 0, width = 0, height = 0, shape = 'rect'){
         this.GAME = GAME;
         this.type = this.constructor.name;
         this.x = x;
         this.y = y;
         this.hspeed = 0;
         this.vspeed = 0;
-        this.id = this.constructor.generateId();//console.log(this.id);
+        this.width = width;
+        this.height = height;
+        this.shape = shape;
+        this.id = this.constructor.generateId();
         this.constructor.instances[this.id] = this;
         this.exists = true;
     }
@@ -80,6 +91,21 @@ class Entity {
         var angle = this.angleTo(entity);
         this.hspeed = Math.cos(angle) * speed;
         this.vspeed = Math.sin(angle) * speed;
+    }
+    
+    isTouching(entity){
+        if (this.shape === 'rect'){
+            if (entity.shape === 'rect'){
+                return this.x < entity.x + entity.width
+                   && this.x + this.width > entity.x 
+                   && this.y < entity.y + entity.height 
+                   && this.height + this.y > entity.y;
+            }
+        } else if (this.shape === 'elipses'){
+            
+        } else {
+            return false;
+        }
     }
     
 }

@@ -6,7 +6,7 @@ var objectEach = require('../common/object-each');
 class Enemy extends Entity {
     
     constructor(GAME, x = 0, y = 0, name = '', power = 0, aggroRange = Infinity, aggroSpeed = 1, accuracy = 1, foresight = 0){
-        super(GAME, x, y);
+        super(GAME, x, y, 32, 32, 'rect');
         this.name = name;
         this.power = power;
         this.aggroRange = aggroRange;
@@ -38,6 +38,11 @@ class Enemy extends Entity {
                 bullet.destroy();
             }
         });
+    }
+    
+    destroy(){
+        this.GAME.create('ItemDrop', [this.x, this.y, 'potion']);
+        super.destroy();
     }
     
     detectTarget(){

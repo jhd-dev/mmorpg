@@ -92,7 +92,7 @@
     $(document)
         .ready(function(){
             
-            $('#viewport').on("click", function(e){
+            $('#viewport').on('click', function(e){
                 var rect = canvas.getBoundingClientRect();
                 socket.emit('click', {
                     x: e.clientX - rect.left - width / 2 + entities.Player[clientId].x,
@@ -210,6 +210,18 @@
                 ctx.fillRect(x - 12, y - 16, 24 * enemy.hp / enemy.maxHp, 4);
                 ctx.fillStyle = 'black';
                 ctx.fillText(enemy.name, x, y - 20);
+            }
+        }
+        if (entities.ItemDrop){
+            for (let id in entities.ItemDrop){
+                let itemDrop = entities.ItemDrop[id];
+                updatePosition(itemDrop);
+                let coors = getRelativeCoors([itemDrop.x, itemDrop.y]);
+                let x = coors[0];
+                let y = coors[1];
+                ctx.strokeRect(x - 8, y - 8, 16, 16);
+                ctx.fillStyle = 'pink';
+                ctx.fillRect(x - 8, y - 8, 16, 16);
             }
         }
     }

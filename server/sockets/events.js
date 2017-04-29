@@ -4,7 +4,7 @@ var config = require('../config/config');
 var maps = require('../config/maps');
 var Game = require('../game/game');
 
-var GAME = new Game(['Player', 'Bullet', 'Enemy']);
+var GAME = new Game(['Player', 'Bullet', 'Enemy', 'ItemDrop']);
 
 var SOCKETS = {};
 var fps = config.FPS;

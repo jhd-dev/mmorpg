@@ -34,7 +34,7 @@ class Player extends Entity {
     }
     
     constructor(GAME){
-        super(GAME);
+        super(GAME, 0, 0, 32, 32, 'rect');
         this.name = 'Guest' + String(Math.random()).substr(2, 4);
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
@@ -58,6 +58,14 @@ class Player extends Entity {
                 bullet.destroy();
             }
         });
+        this.GAME.objects.Enemy.instanceList.forEach(enemy => {
+            if (this.isTouching(enemy)){
+                this.hp -= 0.1;
+            }
+        });
+        if (this.hp <= 0){
+            this.hp = this.maxHp;
+        }
         super.update();
     }
     
