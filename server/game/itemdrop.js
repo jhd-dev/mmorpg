@@ -12,13 +12,18 @@ class ItemDrop extends Entity {
     update(){
         var closestPlayer = null;
         var closestDistance = Infinity;
-        this.GAME.objects.Player.instanceList.forEach(player => {
-            var distance = this.distanceTo(player);console.log(distance);
-            if (distance < closestDistance){
-                closestPlayer = player;
-                closestDistance = distance;
+        for (let player of this.GAME.objects.Player.instanceList){
+            if (this.isTouching(player)){
+                player.hp = Math.min(player.maxHp, player.hp + 4);
+                this.destroy();
+            } else {
+                var distance = this.distanceTo(player);console.log(distance);
+                if (distance < closestDistance){
+                    closestPlayer = player;
+                    closestDistance = distance;
+                }
             }
-        });
+        };
         if (closestDistance < 50){
             this.follow(closestPlayer, Math.min(3 * Math.pow(closestDistance, -0.5)), closestDistance);
         } else {
