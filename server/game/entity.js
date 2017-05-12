@@ -48,8 +48,8 @@ class Entity {
     constructor(GAME, x = 0, y = 0, width = 0, height = 0, shape = 'rect'){
         this.GAME = GAME;
         this.type = this.constructor.name;
-        this.x = x;
-        this.y = y;
+        this.x = x; //left
+        this.y = y; //top
         this.hspeed = 0;
         this.vspeed = 0;
         this.width = width;
@@ -106,6 +106,10 @@ class Entity {
         } else {
             return false;
         }
+    }
+    
+    getPointOnEdge(h, v){ // -1, -1 = top-left; 0, 0 = center; 1, 1 = bottom-right;
+        return [this.x + h * this.width / 2, this.y + v * this.height / 2];
     }
     
 }

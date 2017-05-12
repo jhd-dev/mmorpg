@@ -4,11 +4,11 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './client/js/src/index.js',
+    entry: './client/js/src/game.js',
     output: {
         path: path.resolve(__dirname, './client/js/dist'),
         publicPath: '/dist/',
-        filename: 'index.js'
+        filename: 'game.js'
     },
     module: {
         rules: [

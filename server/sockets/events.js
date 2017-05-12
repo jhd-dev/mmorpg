@@ -45,17 +45,22 @@ module.exports = function(io){
         socket.id = player.id;
         SOCKETS[socket.id] = socket;
         socket.player = player;
-        console.log(socket.request.user);
-        if (socket.request.user){
+        //console.log(socket.request);
+        if (socket.request.user.logged_in && socket.request.user.local){
             var user = socket.request.user;
             player.name = user.local.username;
             player.x = user.x;
             player.y = user.y;
+        } else {
+            player.name = 'Guest' + Math.floor(Math.random() * Math.pow(10, 5));
         }
         socket.emit('init', GAME.getInitPack(socket));
         
         socket.on('disconnect', function(){
             console.log('removed socket');
+            if (socket.request.user){
+                GAME.saveUser(socket);
+            }
             delete SOCKETS[socket.id];
             GAME.disconnect(socket);
         });

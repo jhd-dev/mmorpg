@@ -1,32 +1,35 @@
 'use strict';
 
 var express = require('express');
-
-function isLoggedIn (target){
-	var redirect = '/login' + (target ? "?target=" : "");
-	return function(req, res, next) {
-		if (req.isAuthenticated()) {
-			return next();
-		} else {
-			res.redirect(redirect);
-		}
-	};
-}
+var path = require('path');
+var emailVerifier = require('../controllers/email-verifier');
 
 module.exports = function(passport){
     var router = new express.Router();
     
     router.get('/', function(req, res){
-        res.sendFile(__dirname + '/client/index.html');
+        res.sendFile(path.resolve(__dirname + '/../../client/views/index.html'));
+    });
+    
+    router.get('/play', (req, res) => {
+        if (req.isAuthenticated()){
+            res.sendFile(path.resolve(__dirname + '/../../client/views/game.html'));
+        } else {
+            res.redirect('/');
+        }
     });
     
     router.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/',
+        successRedirect: '/verify',
         failureRedirect: '/login-fail'
     }));
+
+    router.get('/verify', (req, res) => emailVerifier.sendVerification.bind(emailVerifier)(req, res));
+    
+    router.get('/verify/:id', (req, res) => emailVerifier.verifyUser(req, res));
     
     router.post('/login', passport.authenticate('local-login', {
-        successRedirect: '/',
+        successRedirect: '/play',
         failureRedirect: '/login-fail'
     }));
     
@@ -44,3 +47,14 @@ module.exports = function(passport){
 	
 	return router;
 };
+
+function isLoggedIn (target){
+	var redirect = '/login' + (target ? "?target=" : "");
+	return function(req, res, next) {
+		if (req.isAuthenticated()) {
+			return next();
+		} else {
+			res.redirect(redirect);
+		}
+	};
+}

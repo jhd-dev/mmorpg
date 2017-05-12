@@ -1,0 +1,59 @@
+#game {
+    display: inline-block;
+    border: 1px solid #333;
+    height: 600px;
+    -webkit-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#chat-cont {
+    display: table;
+    float: left;
+    height: 600px;
+    background-color: #eee;
+    color: #000;
+}
+
+#chat {
+    display: table-cell;
+    vertical-align: bottom;
+    padding: 4px 0 0 4px;
+    text-align: left;
+}
+
+#chat-input {
+    display: inline-block;
+    border: 0;
+    background-color: inherit;
+}
+
+#chat-input:focus {
+    outline: none;
+}
+
+#viewport {
+    display: inline-block;
+    background-color: #ddd;
+}
+
+#inventory-cont {
+    display: inline-table;
+    background-color: #eee;
+    color: #000;
+    text-align: left;
+}
+
+#inventory {
+    display: table-cell;
+    vertical-align: bottom;
+    padding: 4px 0 0 4px;
+    height: 596px;
+}
+
+.inventory-item {
+    display: inline-block;
+}

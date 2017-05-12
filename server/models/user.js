@@ -9,6 +9,7 @@ var User = new mongoose.Schema({
         password: String,
         email: String
     },
+    verified: Boolean,
     x: Number,
     y: Number
 });

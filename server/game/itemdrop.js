@@ -5,7 +5,7 @@ var Entity = require('./entity');
 class ItemDrop extends Entity {
     
     constructor(GAME, x, y, type){
-        super(GAME, x, y, 32, 32, 'rect');
+        super(GAME, x, y, 16, 16, 'rect');
         this.type = type;
     }
     
@@ -15,15 +15,15 @@ class ItemDrop extends Entity {
         for (let player of this.GAME.objects.Player.instanceList){
             if (this.isTouching(player)){
                 player.hp = Math.min(player.maxHp, player.hp + 4);
-                this.destroy();
+                return this.destroy();
             } else {
-                var distance = this.distanceTo(player);console.log(distance);
+                var distance = this.distanceTo(player) - player.width / 2;
                 if (distance < closestDistance){
                     closestPlayer = player;
                     closestDistance = distance;
                 }
             }
-        };
+        }
         if (closestDistance < 50){
             this.follow(closestPlayer, Math.min(3 * Math.pow(closestDistance, -0.5)), closestDistance);
         } else {

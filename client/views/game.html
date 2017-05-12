@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <title>Fun Game Thing</title>
-        <link rel="stylesheet" href="./css/main.css" type="text/css" />
+        <link rel="stylesheet" href="../css/main.css" type="text/css" />
+        <link rel="stylesheet" href="../css/game.css" type="text/css" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/vue"></script>
     </head>
     <body>
         <div id="app">
@@ -35,33 +38,9 @@
                     </div>
                 </div>
             </div>
-            <div id="sidebar">
-                <h2 id="login-head">Login:</h2>
-                <form id="login-form" action="/login" method="POST">
-                    <span class="login-label">Username:</span>
-                    <input class="login-input" type="text" name="username" />
-                    <br />
-                    <span class="login-label">Password:</span>
-                    <input class="login-input" type="password" name="password" />
-                    <br />
-                    <input class="login-submit" type="submit" value="Login" />
-                </form>
-                <h2 id="login-head">Sign up:</h2>
-                <form id="signup-form" action="/signup" method="POST">
-                    <span class="login-label">Username:</span>
-                    <input class="login-input" type="text" name="username" />
-                    <br />
-                    <span class="login-label">Password:</span>
-                    <input class="login-input" type="password" name="password" />
-                    <br />
-                    <input class="login-submit" type="submit" value="Sign Up" />
-                </form>
-            </div>
         </div>
         
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script type="text/javascript" src="https://unpkg.com/vue"></script>
-        <script type="text/javascript" src="./js/vendor/socket.io.js"></script>
-        <script type="text/javascript" src="./js/dist/index.js"></script>
+        <script type="text/javascript" src="../js/vendor/socket.io.js"></script>
+        <script type="text/javascript" src="../js/dist/game.js"></script>
     </body>
 </html>

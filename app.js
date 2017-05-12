@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: 'secret',
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     key: 'express.sid',
     store: sessionStorage
 }));
@@ -55,18 +55,34 @@ io.use(passportSocketIo.authorize({
     cookieParser: cookieParser,
     key: 'express.sid',
     secret: 'secret',
-    store: sessionStorage
+    store: sessionStorage,
+    //fail: onAuthorizeFail
 }));
 
 events(io);
 
-profiler.startProfiling('1', true);
-setTimeout(function(){
-    var profile1 = profiler.stopProfiling('1');
-    profile1.export(function(err, result){
-        if (err) throw err;
-        fs.writeFile('./profile.cpuprofile', result);
-        profile1.delete();
-        console.log('Profile saved.');
-    }, 10000);
-});
+setProfiling();
+
+function onAuthorizeSuccess(data, accept){
+    return accept();
+}
+
+function onAuthorizeFail(data, message, err, accept){
+    if (err) throw new Error(message);
+    //console.log(message);
+    //console.log(data);
+    return accept();
+}
+
+function setProfiling(){
+    profiler.startProfiling('1', true);
+    setTimeout(function(){
+        var profile1 = profiler.stopProfiling('1');
+        profile1.export(function(err, result){
+            if (err) throw err;
+            fs.writeFile('./profile.cpuprofile', result);
+            profile1.delete();
+            console.log('Profile saved.');
+        }, 10000);
+    });
+}

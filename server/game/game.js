@@ -93,8 +93,8 @@ class Game {
     
     saveUser(socket){
         var player = socket.player;
-        User.findOne({
-            username: player.name,
+        User.findOneAndUpdate({
+            username: socket.request.user.local.username
         }, {
             x: player.x,
             y: player.y
