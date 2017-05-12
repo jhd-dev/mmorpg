@@ -11,6 +11,10 @@ module.exports = function(passport){
         res.sendFile(path.resolve(__dirname + '/../../client/views/index.html'));
     });
     
+    router.get('/about', function(req, res){
+        res.sendFile(path.resolve(__dirname + '/../../client/views/about.html'));
+    });
+    
     router.get('/play', (req, res) => {
         if (req.isAuthenticated()){
             res.sendFile(path.resolve(__dirname + '/../../client/views/game.html'));
