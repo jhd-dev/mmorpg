@@ -1,4 +1,4 @@
-(function(io, $, Vue){
+;(function(io, $, Vue){
     'use strict';
     
     var width = 800;
@@ -27,10 +27,20 @@
     var textboxFocused = false;
     
     var entities = {};
+    var map = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+    ];
     var clientId = '';
+    var tileSize = 16;
     
     var background = new Image();
     background.src = '../img/grass.png';
+    var spritesheet = new Image();
+    spritesheet.src = '../img/spritesheet.png';
     
     const commands = {
         help: function(){
@@ -46,7 +56,7 @@
     
     var socket = io();
     
-    socket.on('init', function(data){
+    socket.on('init', function(data){console.log(data);
         entities = data.entities;
         Object.keys(entities).forEach(type => {
            Object.keys(entities[type]).forEach(id => {
@@ -54,17 +64,18 @@
                entities[type][id].id = id;
            });
         });
+        map = map;
         clientId = data.clientId;
         setInterval(update, 20);
     });
     
-    socket.on('update', function(data){
+    socket.on('update', function(data){console.log(data);
         for (var removed of data.removed){
             delete entities[removed.type][removed.id];
         }
         var objects = Object.keys(data.entities);
         for (var i = 0; i < objects.length; i ++){
-            var objectType = objects[i];
+            var objectType = objects[i];console.log(objectType);
             var instanceIds = Object.keys(data.entities[objectType]);
             for (var j = 0; j < instanceIds.length; j ++){
                 var instanceId = instanceIds[j];
@@ -83,15 +94,11 @@
                 }
             }
         }
-        app.$set(app, 'items', data.inventory.items);
+        //app.$set(app, 'items', data.inventory.items);
     });
     
     socket.on('chatMsg', data => {
         app.messages = app.messages.concat([data]);
-    });
-    
-    $.getJSON(window.location.host + '/api/user', function(user){
-        //alert(user);
     });
     
     $(document)
@@ -190,6 +197,11 @@
                 ctx.drawImage(background, left + x, top + y, 480, 480);
             }
         }
+        /*map.forEach((row, y) => {
+            row.forEach((tile, x) => {
+                ctx.drawImage(spritesheet, (tile * (tileSize + 1)) % 968, tile * (tileSize + 1), tileSize, tileSize, left + x * tileSize, top + y * tileSize, tileSize, tileSize);
+            });
+        });*/
     }
     
     function drawEntities(){

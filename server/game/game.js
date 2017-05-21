@@ -1,94 +1,61 @@
 'use strict';
 
+var Zone = require('./zone');
 var User = require('../models/user');
+var maps = require('../config/maps');
 
 var pathToObjects = './';
 
 class Game {
     
-    constructor(gameClassNames = [], maps = {}){
-        this.objects = {};
-        gameClassNames.forEach(className => {
-            this.objects[className] = require(pathToObjects + className.toLowerCase());
-            this.objects[className].GAME = this;
-            this.objects[className].instances = {};
+    constructor(gameClassNames = []){
+        this.zones = {};
+        Object.keys(maps).forEach(name => {
+            this.zones[name] = new Zone(this, name, maps[name], gameClassNames, maps[name].tileSize);
         });
         
-        this.maps = Object.keys(maps).reduce((acc, name) => new Map(name, maps[name].grid, maps[name].tileSize), {});
-        
-        this.prevPack = {
-            entities: {}
-        };
-        this.enemySpawnCounter = 0;
+        this.sockets = {};
+        this.updateInterval = null;
+    }
+    
+    start(fps){
+        this.updateInterval = setInterval(() => {
+            this.update();
+            this.sendUpdate();
+        }, 1000 / fps);
     }
     
     connect (socket){
-        return this.objects.Player.connect(socket);
+        return this.zones['grass'].objects.Player.connect(socket);
     }
     
     disconnect(socket){
         this.saveUser(socket);
-        return this.objects.Player.disconnect(socket);
+        return socket.player.zone.objects.Player.disconnect(socket);
     }
     
     update(){
-        var prevPack = this.prevPack;
-        
         if (this.enemySpawnCounter % (8000 / 20) === 0 
-            && Object.keys(this.objects.Enemy.instances).length < 3 
-            && Object.keys(this.objects.Player.instances).length
+            && Object.keys(this.zones['grass'].objects.Enemy.instances).length < 3 
+            && Object.keys(this.zones['grass'].objects.Player.instances).length
         ){
             this.create('Enemy', [Math.random() * 800, Math.random() * 600, 'Evil Monster', 10, 180]);
         }
         this.enemySpawnCounter ++;
         
-        var newPack = {
-            entities: {}
-        };
-        var updatePack = {
-            entities: {},
-            removed: []
-        };
-        Object.keys(this.objects).forEach(className => {//console.log(className);
-            newPack.entities[className] = this.objects[className].update();
-            if (!prevPack.entities[className]){
-                prevPack.entities[className] = {};
-            }
-            Object.keys(prevPack.entities[className]).forEach(id => {//console.log(id);
-                if (newPack.entities[className][id]){
-                    for (var key in prevPack.entities[className][id]){
-                        if (prevPack.entities[className][id][key] !== newPack.entities[className][id][key]){
-                            if (!updatePack.entities[className]){
-                                updatePack.entities[className] = {};
-                            }
-                            if (!updatePack.entities[className][id]){
-                                updatePack.entities[className][id] = {};
-                            }
-                            updatePack.entities[className][id][key] = newPack.entities[className][id][key];
-                        }
-                    }
-                } else {
-                    updatePack.removed.push({
-                        type: className,
-                        id: id
-                    });
-                }
-            });
-            Object.keys(newPack.entities[className]).forEach(id => {//console.log(id);
-                if (!prevPack.entities[className][id]){
-                    if (!updatePack.entities[className]){
-                        updatePack.entities[className] = {};
-                    }
-                    updatePack.entities[className][id] = newPack.entities[className][id];
-                }
-            });
+        Object.keys(this.zones).forEach(zoneName => {
+            this.zones[zoneName].update();
         });
-        this.prevPack = newPack;
-        return updatePack;
+    }
+    
+    sendUpdate(){
+        Object.keys(this.zones).forEach(zoneName => {
+            this.zones[zoneName].sendUpdate();
+        });
     }
     
     create(className, args = []){
-        return new this.objects[className](this, ...args);
+        return new this.zones['grass'].objects[className](this, ...args);
     }
     
     saveUser(socket){
@@ -103,15 +70,16 @@ class Game {
         });
     }
     
-    getInitPack(socket){
-        var entities = {};
-        Object.keys(this.objects).forEach(className => {
-            entities[className] = this.objects[className].getClientPack();
-        });
-        return {
-            entities: entities,
-            clientId: socket.id
-        };
+    eachSocket(fn){
+        return Object.keys(this.sockets).map(id => fn(this.sockets[id], id));
+    }
+    
+    enterRoom(room, client){
+        this.rooms[room].enter(client);
+    }
+    
+    leaveRoom(room, client){
+        this.rooms[room].leave(client);
     }
     
 }

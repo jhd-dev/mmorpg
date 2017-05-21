@@ -11,7 +11,7 @@ var downKey = 83;
 class Player extends Entity {
     
     static connect(socket){
-        var player = this.GAME.create('Player');
+        var player = this.GAME.zones['grass'].create('Player');
         
         socket.on('keyDown', function(data){//console.log(data.key);
             player.keys[data.key] = true;

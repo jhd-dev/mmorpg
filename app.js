@@ -11,9 +11,9 @@ var passport = require('passport');
 var passportSocketIo = require('passport.socketio');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var main = require('./server/main');
 var config = require('./server/config/config');
 var router = require('./server/routes/router');
-var events = require('./server/sockets/events');
 
 require('./server/config/passport')(passport);
 
@@ -59,7 +59,7 @@ io.use(passportSocketIo.authorize({
     //fail: onAuthorizeFail
 }));
 
-events(io);
+main(io);
 
 setProfiling();
 

@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var emailValidator = require('email-validator');
 var mailSettings = require('../config/mailer');
 var User = require('../models/user');
+var domain = require('../config/config').DOMAIN;
 
 class EmailVerifier {
     
@@ -17,7 +18,7 @@ class EmailVerifier {
     
     sendVerification(req, res){console.log('ver');
         if (this.validateEmail(req.body.email)){
-            var verificationUrl = '/verify/' + req.user._id;console.log(req);
+            var verificationUrl = domain + '/verify/' + req.user._id;console.log(req);
             this.transporter.sendMail({
                 to: req.user.local.email,
                 subject: 'Verify your account',
