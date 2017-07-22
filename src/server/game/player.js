@@ -1,40 +1,22 @@
 'use strict';
 
-var Entity = require('./entity');
-var Inventory = require('./inventory');
+const Entity = require('./entity');
+const Inventory = require('./inventory');
 
-var rightKey = 68;
-var upKey = 87;
-var leftKey = 65;
-var downKey = 83;
+const rightKey = 68;
+const upKey = 87;
+const leftKey = 65;
+const downKey = 83;
 
 class Player extends Entity {
-    
-    static connect(socket){
-        var player = this.GAME.zones['grass'].create('Player');
-        
-        socket.on('keyDown', function(data){//console.log(data.key);
-            player.keys[data.key] = true;
-        });
-        
-        socket.on('keyUp', function(data){
-            player.keys[data.key] = false;
-        });
-        
-        socket.on('click', function(data){
-            player.shootBullet(data.x, data.y);
-        });
-        
-        return player;
-    }
     
     static disconnect(socket){
         delete Player.instances[socket.id];
         socket.player.destroy();
     }
     
-    constructor(GAME){
-        super(GAME, 0, 0, 16, 16, 'rect');
+    constructor(GAME, room){
+        super(GAME, room, 0, 0, 16, 16, 'rect');
         this.name = 'Guest' + String(Math.random()).substr(2, 4);
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
@@ -42,6 +24,7 @@ class Player extends Entity {
         this.maxHp = 10;
         this.hp = this.maxHp;
         this.inventory = new Inventory(this);
+        this.types.push('Player');
     }
     
     destroy(){
@@ -51,14 +34,14 @@ class Player extends Entity {
     
     update(){
         this.updateSpeed();
-        Object.keys(this.GAME.objects.Bullet.instances).forEach(bulletId => {
-            var bullet = this.GAME.objects.Bullet.instances[bulletId];
+        Object.keys(this.room.entities.Bullet).forEach(bulletId => {
+            let bullet = this.room.entities.Bullet[bulletId];
             if (bullet.creator !== this && this.x < bullet.x + 16 && this.x + 16 > bullet.x && this.y < bullet.y + 16 && this.y + 16 > bullet.y){
                 this.hp = Math.max(0, this.hp - 1);
                 bullet.destroy();
             }
         });
-        this.GAME.objects.Enemy.instanceList.forEach(enemy => {
+        Object.keys(this.room.entities.Enemy).map(id => this.room.entities.Enemy[id]).forEach(enemy => {
             if (this.isTouching(enemy)){
                 this.hp -= 0.1;
             }
@@ -75,7 +58,7 @@ class Player extends Entity {
     }
     
     shootBullet(x, y){
-        var bullet = this.GAME.create('Bullet', [this, Math.atan2(y - this.y, x - this.x)]);
+        let bullet = this.room.create('Bullet', [this, Math.atan2(y - this.y, x - this.x)]);
         bullet.hspeed += this.hspeed;
         bullet.vspeed += this.vspeed;
     }

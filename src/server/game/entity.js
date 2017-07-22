@@ -2,51 +2,17 @@
 
 class Entity {
     
-    static update(){
-        var instances = {};
-        Object.keys(this.instances).forEach(id => {
-            var entity = this.instances[id];
-            entity.update();
-            var clientEntity = {};
-            this.clientFormat.forEach(key => {
-                clientEntity[key] = entity[key];
-            });
-            instances[id] = clientEntity;
-        });
-        return instances;
-    }
-    
-    static getClientPack(){
-        var instances = {};
-        Object.keys(this.instances).forEach(id => {
-            var entity = this.instances[id];
-            var clientEntity = {};
-            this.clientFormat.forEach(key => {
-                clientEntity[key] = entity[key];
-            });
-            instances[id] = clientEntity;
-        });
-        return instances;
-    }
-    
     static generateId(){
-        var id;
+        let id;
         do {
             id = String(Math.round(Math.random() * Math.pow(10, 8)));
         } while (this.instances[id]);
         return id;
     }
     
-    static each(callback){
-        return Object.keys(this.instances).map((id, i, arr) => callback(this.instances[id], id, arr));
-    }
-    
-    static get instanceList(){
-        return Object.keys(this.instances).map(id => this.instances[id]);
-    }
-    
-    constructor(GAME, x = 0, y = 0, width = 0, height = 0, shape = 'rect'){
+    constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, shape = 'rect'){
         this.GAME = GAME;
+        this.room = room;
         this.type = this.constructor.name;
         this.x = x; //left
         this.y = y; //top
@@ -58,16 +24,39 @@ class Entity {
         this.id = this.constructor.generateId();
         this.constructor.instances[this.id] = this;
         this.exists = true;
+        this.types = ['Entity'];
+        this.timers = {};
     }
     
     destroy(){
         this.exists = false;
-        delete this.constructor.instances[this.id];
-        //this.GAME.destroy(this);
+        this.room.remove(this);
+    }
+    
+    on(event, fn, params){
+        if (event === 'destroy'){
+            
+        }
     }
     
     update(){
         this.updatePosition();
+        Object.keys(this.timers).forEach(name => {
+            let timer = this.timers[name];
+            if (!timer.count){
+                timer.action();
+                delete this.timers[name];
+            }
+            timer.count --;
+        });
+    }
+    
+    getClientPack(){
+        let pack = {};
+        this.constructor.clientFormat.forEach(key => {
+            pack[key] = this[key];
+        });
+        return pack;
     }
     
     updatePosition(){
@@ -88,9 +77,15 @@ class Entity {
     }
     
     follow(entity, speed = 1){
-        var angle = this.angleTo(entity);
-        this.hspeed = Math.cos(angle) * speed;
-        this.vspeed = Math.sin(angle) * speed;
+        let angle = this.angleTo(entity);
+        if (this.distanceTo(entity) <= speed){
+            this.hspeed = entity.x - this.x;
+            this.vspeed = entity.y - this.y;
+        } else {
+            this.hspeed = Math.cos(angle) * speed;
+            this.vspeed = Math.sin(angle) * speed;
+        }
+        
     }
     
     isTouching(entity){
@@ -112,9 +107,16 @@ class Entity {
         return [this.x + h * this.width / 2, this.y + v * this.height / 2];
     }
     
+    setTimer(name, fn, steps){
+        this.timers[name] = {
+            name: name,
+            action: fn,
+            count: steps
+        };
+    }
+    
 }
 
-Entity.instances = {};
-Entity.clientFormat = ['x', 'y', 'hspeed', 'vspeed'];
+Entity.clientFormat = ['types', 'x', 'y', 'hspeed', 'vspeed'];
 
 module.exports = Entity;

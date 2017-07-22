@@ -1,15 +1,15 @@
-;(function(io, $, Vue){
+(function(io, $, Vue){
     'use strict';
     
-    var width = 800;
-    var height = 600;
+    let width = 800;
+    let height = 600;
     
-    var rightKey = 68;
-    var upKey = 87;
-    var leftKey = 65;
-    var downKey = 83;
+    let rightKey = 68;
+    let upKey = 87;
+    let leftKey = 65;
+    let downKey = 83;
     
-    var app = new Vue({
+    let app = new Vue({
         el: '#game',
         data: {
             messages: [{
@@ -20,26 +20,31 @@
         }
     });
     
-    var canvas = document.getElementById('viewport');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('viewport');
+    let ctx = canvas.getContext('2d');
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
     ctx.textAlign = 'center';
     
-    var textboxFocused = false;
+    let textboxFocused = false;
     
-    var entities = {};
-    var map = [
+    let entities = {};
+    let map = [
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
     ];
-    var clientId = '';
-    var tileSize = 16;
+    let clientId = '';
+    let tileSize = 16;
+    let fps = 60;
     
-    var background = new Image();
+    let background = new Image();
     background.src = '../img/grass.png';
-    var spritesheet = new Image();
+    let spritesheet = new Image();
     spritesheet.src = '../img/spritesheet.png';
     
     const commands = {
@@ -54,43 +59,37 @@
         }
     };
     
-    var socket = io();
+    let socket = io();
     
     socket.on('init', function(data){console.log(data);
         entities = data.entities;
-        Object.keys(entities).forEach(type => {
-           Object.keys(entities[type]).forEach(id => {
-               entities[type][id].type = type;
-               entities[type][id].id = id;
-           });
+        Object.keys(entities).forEach(id => {
+            entities[id].id = id;
+            entities[id].type = entities[id].types[entities[id].types.length - 1];
         });
-        map = map;
         clientId = data.clientId;
-        setInterval(update, 20);
+        setInterval(update, 1000 / fps);
     });
     
-    socket.on('update', function(data){console.log(data);
-        for (var removed of data.removed){
-            delete entities[removed.type][removed.id];
+    socket.on('update', function(data){//console.log(entities, clientId);//console.log(data);
+        for (let removed of data.removed){
+            delete entities[removed.id];
         }
-        var objects = Object.keys(data.entities);
-        for (var i = 0; i < objects.length; i ++){
-            var objectType = objects[i];console.log(objectType);
-            var instanceIds = Object.keys(data.entities[objectType]);
-            for (var j = 0; j < instanceIds.length; j ++){
-                var instanceId = instanceIds[j];
-                var changes = Object.keys(data.entities[objectType][instanceId]);
-                for (var k = 0; k < changes.length; k ++){
-                    var changedProp = changes[k];
-                    var changedVal = data.entities[objectType][instanceId][changedProp];
-                    if (!entities[objectType][instanceId]){
-                        entities[objectType][instanceId] = data.entities[objectType][instanceId];
-                        entities[objectType][instanceId].type = objectType;
-                        entities[objectType][instanceId].id = instanceId;
-                    } else {
-                        entities[objectType][instanceId][changedProp] = changedVal;
-                        updateException(objectType, instanceId, changedProp);
-                    }
+        
+        let instanceIds = Object.keys(data.entities);
+        for (let j = 0; j < instanceIds.length; j ++){
+            let instanceId = instanceIds[j];
+            let changes = Object.keys(data.entities[instanceId]);
+            for (let k = 0; k < changes.length; k ++){
+                let changedProp = changes[k];
+                let changedVal = data.entities[instanceId][changedProp];
+                if (!entities[instanceId]){
+                    entities[instanceId] = data.entities[instanceId];
+                    entities[instanceId].type = entities[instanceId].types[entities[instanceId].types.length - 1];console.log(entities[instanceId].type);
+                    entities[instanceId].id = instanceId;
+                } else {
+                    entities[instanceId][changedProp] = changedVal;
+                    updateException('', instanceId, changedProp);
                 }
             }
         }
@@ -104,11 +103,11 @@
     $(document)
         .ready(function(){
             
-            $('#viewport').on('mousedown', function(e){
-                var rect = canvas.getBoundingClientRect();
+            $('#viewport').on('mousedown', function(e){console.log('click');
+                let rect = canvas.getBoundingClientRect();
                 socket.emit('click', {
-                    x: e.clientX - rect.left - width / 2 + entities.Player[clientId].x,
-                    y: e.clientY - rect.top - height / 2 + entities.Player[clientId].y
+                    x: e.clientX - rect.left - width / 2 + entities[clientId].x,
+                    y: e.clientY - rect.top - height / 2 + entities[clientId].y
                 });
             });
             
@@ -130,9 +129,9 @@
             
             $('#chat-form').on('submit', function(e){
                 e.preventDefault();
-                var message = $('#chat-input').val();
+                let message = $('#chat-input').val();
                 if (message.charAt(0) === '/'){
-                    var inputs = message.substr(1).split(' ');
+                    let inputs = message.substr(1).split(' ');
                     if (commands[inputs[0]]){
                         commands[inputs[0]].apply(null, inputs.slice(1));
                     } else {
@@ -172,7 +171,7 @@
         });
     
     function updateException(objectType, instanceId, changedProp){
-        var object = entities[objectType][instanceId];
+        let object = entities[instanceId];
         if (objectType === 'Player'){
             if (changedProp === 'x'){
                 object.xCenter = object.x + object.width / 2;
@@ -189,11 +188,11 @@
     }
     
     function drawMap(){
-        var coors = getRelativeCoors([0, 0]);
-        var left = coors[0];
-        var top = coors[1];
-        for (var x = 0; x < width; x += 480){
-            for (var y = 0; y < height; y += 480){
+        let coors = getRelativeCoors([0, 0]);
+        let left = coors[0];
+        let top = coors[1];
+        for (let x = 0; x < width; x += 480){
+            for (let y = 0; y < height; y += 480){
                 ctx.drawImage(background, left + x, top + y, 480, 480);
             }
         }
@@ -206,7 +205,7 @@
     
     function drawEntities(){
         Object.keys(entities)  
-            .reduce((acc, type) => acc.concat(Object.keys(entities[type]).map(id => entities[type][id])), [])
+            .reduce((acc, id) => acc.concat(entities[id]), [])
             .sort((a, b) => a.y + a.height > b.y + b.height)
             .forEach(entity => {
                 let coors = getRelativeCoors([entity.x, entity.y]);
@@ -259,7 +258,7 @@
     }
     
     function getRelativeCoors(coors){
-        return [coors[0] - entities.Player[clientId].x + width / 2, coors[1] - entities.Player[clientId].y + height / 2];
+        return entities[clientId] ? [coors[0] - entities[clientId].x + width / 2, coors[1] - entities[clientId].y + height / 2] : [0, 0];
     }
     
     function updatePosition(entity){

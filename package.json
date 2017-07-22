@@ -2,7 +2,7 @@
   "name": "mmorpg",
   "version": "1.0.0",
   "description": "An HTML5 online multiplayer game powered by Socket.io",
-  "main": "app.js",
+  "main": "src/app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/porygonj/mmorpg.git"
@@ -38,7 +38,7 @@
     "webpack-dev-server": "^2.2.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node ./src/app.js",
     "dev": "cross-env NODE_ENV=development webpack --progress --watch",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },

@@ -5,8 +5,9 @@ var objectEach = require('../common/object-each');
 
 class Enemy extends Entity {
     
-    constructor(GAME, x = 0, y = 0, name = '', power = 0, aggroRange = Infinity, aggroSpeed = 1, accuracy = 1, foresight = 0){
-        super(GAME, x, y, 16, 16, 'rect');
+    constructor(GAME, room, x = 0, y = 0, name = '', power = 0, aggroRange = Infinity, aggroSpeed = 1, accuracy = 1, foresight = 0){
+        super(GAME, room, x, y, 16, 16, 'rect');
+        this.types.push('Enemy');
         this.name = name;
         this.power = power;
         this.aggroRange = aggroRange;
@@ -31,7 +32,7 @@ class Enemy extends Entity {
         }
         objectEach(this.GAME.objects.Bullet.instances, bullet => {
             if (bullet.creator !== this && this.x < bullet.x + 16 && this.x + 16 > bullet.x && this.y < bullet.y + 16 && this.y + 16 > bullet.y){
-                this.hp = Math.max(0, this.hp - 1);
+                this.hp = Math.max(0, this.hp - 1);console.log(this.hp);
                 if (!this.hp){
                     this.destroy();
                 }

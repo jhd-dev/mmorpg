@@ -1,2 +1,3 @@
-client/js/vendor/* linguist-vendored
-client/js/dist/* linguist-vendored
+*/client/js/vendor/* linguist-vendored
+*/client/js/dist/* linguist-generated=true
+docs/* linguist-documentation

@@ -4,9 +4,9 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './client/js/src/game.js',
+    entry: './src/client/js/src/game.js',
     output: {
-        path: path.resolve(__dirname, './client/js/dist'),
+        path: path.resolve(__dirname, './src/client/js/dist'),
         publicPath: '/dist/',
         filename: 'game.js'
     },

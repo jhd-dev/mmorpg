@@ -80,7 +80,7 @@ function setProfiling(){
         var profile1 = profiler.stopProfiling('1');
         profile1.export(function(err, result){
             if (err) throw err;
-            fs.writeFile('./profile.cpuprofile', result);
+            fs.writeFile('../profile.cpuprofile', result);
             profile1.delete();
             console.log('Profile saved.');
         }, 10000);
