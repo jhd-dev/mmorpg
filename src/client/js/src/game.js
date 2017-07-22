@@ -31,13 +31,6 @@
     let textboxFocused = false;
     
     let entities = {};
-    let map = [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-    ];
     let clientId = '';
     let tileSize = 16;
     let fps = 60;

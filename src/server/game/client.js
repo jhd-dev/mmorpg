@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 class Client {
     
-    constructor(socket, GAME){
+    constructor(socket, GAME){console.log(GAME);
         this.socket = socket;
         this.GAME = GAME;
         this.chatCommands = {
@@ -28,7 +28,7 @@ class Client {
         };
     }
     
-    onConnect(){
+    onConnect(){//console.log(this.GAME);
         this.player = this.GAME.create('Player', []);
         //console.log(player);
         this.id = this.player.id;

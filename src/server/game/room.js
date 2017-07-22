@@ -5,14 +5,14 @@
  */
 class Room {
     
-    constructor(GAME, zone, tilemap){
+    constructor(GAME, zone, map){
         this.id = String(Math.random());
         this.GAME = GAME;
         this.objects = this.GAME.objects;
         this.zone = zone;
-        this.tilemap = tilemap;
-        this.width = tilemap[0].length;
-        this.height = tilemap.length;
+        this.map = map;
+        this.width = map.width;
+        this.height = map.height;
         this.clients = {};
         this.entities = {Entity: {}};
         Object.keys(this.objects).forEach(className => {//console.log(className);

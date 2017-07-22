@@ -1,7 +1,8 @@
 'use strict';
 
+const Client = require('./client');
 const Zone = require('./zone');
-const maps = require('../config/maps');
+const gameData = require('../config/game-data');
 
 const pathToObjects = './';
 
@@ -14,10 +15,10 @@ class Game {
             this.objects[className].GAME = this.GAME;
             this.objects[className].instances = {};
         });
-        console.log(this.objects);
+        //console.log(this.objects);
         this.zones = {};
-        Object.keys(maps).forEach(name => {
-            this.zones[name] = new Zone(this, name, maps[name], maps[name].tileSize);
+        Object.keys(gameData.zones).forEach(zoneName => {
+            this.zones[zoneName] = new Zone(this, zoneName, gameData.zones[zoneName].mapName);
         });
         this.updateInterval = null;
     }
@@ -29,8 +30,9 @@ class Game {
         }, 1000 / fps);
     }
     
-    connect (socket){
-        return this.zones['grass'].objects.Player.connect(socket);
+    onConnect (socket){
+        let client = new Client(socket, this);
+        client.onConnect();
     }
     
     update(){

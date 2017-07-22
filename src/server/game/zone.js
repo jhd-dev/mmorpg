@@ -1,21 +1,32 @@
 'use strict';
 
+const tmxParser = require('tmx-parser');
 const Room = require('./room');
+
+const mapDir = __dirname + '/maps/';
 
 class Zone {
     
-    constructor(GAME, name, grid, tileSize = 16){
+    constructor(GAME, name, mapName){
         this.GAME = GAME;
         this.name = name;
-        this.grid = grid;
-        this.width = grid[0].length * tileSize;
-        this.height = grid.length * tileSize;
-        this.tileSize = tileSize;
-        this.rooms = [new Room(GAME, this, grid)];
+        this.mapName = mapName;
+        this.rooms = [];
+        this.getMap((err, map) => {
+            if (err) throw err;
+            this.map = map;
+            this.rooms[0] = new Room(GAME, this, this.map);
+        });
     }
     
-    setup(){
-        return this;
+    getMap(callback){
+        /*$.ajax({
+            url: mapDir + this.mapName + '.tmx',
+            dataType: 'xml',
+            error: callback,
+            success: console.log
+        })*/
+        tmxParser.parseFile(mapDir + this.mapName + '.tmx', callback);
     }
     
     enter(client){
