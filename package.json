@@ -16,6 +16,8 @@
     "email-validator": "^1.0.7",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "mongoose": "^4.9.4",
     "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
