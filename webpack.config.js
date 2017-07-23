@@ -1,58 +1,86 @@
 'use strict';
 
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = {
-    entry: './src/client/js/src/game.js',
-    output: {
-        path: path.resolve(__dirname, './src/client/js/dist'),
-        publicPath: '/dist/',
-        filename: 'game.js'
+module.exports = [
+    {
+        context: path.join(__dirname, 'src'),
+        entry: './',
+        output: {
+            path: path.resolve(__dirname, './dist'),
+            publicPath: '/dist/',
+            filename: 'main.js'
+        },
+        plugins: [
+            new CopyWebpackPlugin([
+                { from: './' }
+            ], { ignore: ['*.js']})
+        ],
+        devServer: {
+            historyApiFallback: true,
+            noInfo: true
+        },
+        performance: {
+            hints: false
+        }
     },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.(png|jpg|gif|svg)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]?[hash]'
+    {
+        //context: path.join(__dirname, 'src'),
+        entry: path.resolve(__dirname, './src') + '/app.js',
+        output: {
+            path: path.resolve(__dirname, './dist'),
+            publicPath: '/dist/',
+            filename: 'main.js'
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    loader: 'babel-loader',
+                    exclude: /node_modules/,
+                    options: {
+                        name: '[name].js'
+                    }
+                },
+                {
+                    test: /^((?!\.js).)*$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name].[ext]?[hash]'
+                    }
                 }
-            }
-        ]
-    },
-    devServer: {
-        historyApiFallback: true,
-        noInfo: true
-    },
-    performance: {
-        hints: false
-    },
-    //devtool: '#eval-source-map'
-};
+            ]
+        },
+        devServer: {
+            historyApiFallback: true,
+            noInfo: true
+        },
+        performance: {
+            hints: false
+        }
+    }
+];
 
-if (process.env.NODE_ENV === 'production') {
-    module.exports.devtool = '#source-map';
-    // http://vue-loader.vuejs.org/en/workflow/production.html
-    module.exports.plugins = (module.exports.plugins || []).concat([
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true,
-            compress: {
-                warnings: false
-            }
-        }),
-        new webpack.LoaderOptionsPlugin({
-            minimize: true
-        })
-    ]);
+if (process.env.NODE_ENV === 'production'){
+    module.exports.forEach(function(config){
+        config.devtool = '#source-map';
+        config.plugins = (config.plugins || []).concat([
+            new webpack.DefinePlugin({
+                'process.env': {
+                    NODE_ENV: '"production"'
+                }
+            }),
+            new webpack.optimize.UglifyJsPlugin({
+                sourceMap: true,
+                compress: {
+                    warnings: false
+                }
+            }),
+            new webpack.LoaderOptionsPlugin({
+                minimize: true
+            })
+        ]);
+    });
 }
