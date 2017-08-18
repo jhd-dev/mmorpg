@@ -9,10 +9,6 @@ class Entity {
         return randomstring.generate(len); //String(Math.round(Math.random() * Math.pow(10, 8)));
     }
     
-    get hitbox(){
-        return this.hitboxes[this.activeHitbox];
-    }
-    
     constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, shape = 'rect', hitboxes = {}){
         this.GAME = GAME;
         this.room = room;
@@ -31,8 +27,12 @@ class Entity {
         this.id = this.constructor.generateId();
         //this.constructor.instances[this.id] = this;
         this.exists = true;
-        this.types = ['Entity'];
+        this.types = this.types ? this.type.concat(['Entity']) : ['Entity'];
         this.timers = {};
+    }
+    
+    get hitbox(){
+        return this.hitboxes[this.activeHitbox];
     }
     
     destroy(){

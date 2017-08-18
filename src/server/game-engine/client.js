@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 class Client {
     
-    constructor(socket, GAME){console.log(GAME);
+    constructor(socket, GAME){
         this.socket = socket;
         this.GAME = GAME;
         this.chatCommands = {
@@ -64,7 +64,7 @@ class Client {
             console.log(data);
         });
         
-        this.socket.on('keyDown', data => {console.log(data.key);
+        this.socket.on('keyDown', data => {
             this.player.keys[data.key] = true;
         });
         

@@ -23,7 +23,8 @@ class Room {
         };
         this.removed = [];
         this.enemySpawnCounter = 0;
-        this.create('Enemy', [Math.random() * this.width, Math.random() * this.height, 'Evil Monster', 10, 180]);
+        let test = this.create('Enemy', [Math.random() * this.width, Math.random() * this.height, 'Evil Monster', 10, 180]);
+        this.remove(test);
     }
     
     enter(client){
@@ -34,6 +35,7 @@ class Room {
     }
     
     leave(client){
+        client.player.destroy();
         delete this.clients[client.id];
     }
     
@@ -145,6 +147,7 @@ class Room {
         entity.types.forEach(type => { console.log('deleting ' + type);
             delete this.entities[type][entity.id];
         });
+        console.log(this.entities);
     }
     
     removeRoom(){
