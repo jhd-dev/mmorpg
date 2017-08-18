@@ -2,32 +2,36 @@
 
 const Client = require('./client');
 const Zone = require('./zone');
-const gameData = require('../config/game-data');
-
-const pathToObjects = './';
 
 class Game {
     
-    constructor(gameClassNames = []){
+    constructor(input){
+        this.fps = input.fps;
+        this.mapDir = input.mapDir;
         this.objects = {};
-        gameClassNames.forEach(className => {
-            this.objects[className] = require(pathToObjects + className.toLowerCase());
-            this.objects[className].GAME = this.GAME;
-            this.objects[className].instances = {};
-        });
+        Object.keys(input.objects).forEach(className => this.addGameObject(className, input.objects[className]));
         //console.log(this.objects);
         this.zones = {};
-        Object.keys(gameData.zones).forEach(zoneName => {
-            this.zones[zoneName] = new Zone(this, zoneName, gameData.zones[zoneName].mapName);
+        Object.keys(input.zones).forEach(zoneName => {
+            this.zones[zoneName] = new Zone(this, zoneName, input.zones[zoneName].mapName);
         });
         this.updateInterval = null;
     }
     
-    start(fps){
+    addGameObject(className, pathToClass){
+        this.objects[className] = require(pathToClass);
+        this.objects[className].GAME = this;
+    }
+    
+    start(fps = this.fps){
         this.updateInterval = setInterval(() => {
             this.update();
             this.sendUpdate();
         }, 1000 / fps);
+    }
+    
+    stop(){
+        this.clearInterval(this.updateInterval);
     }
     
     onConnect (socket){

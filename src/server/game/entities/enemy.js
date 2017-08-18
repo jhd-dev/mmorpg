@@ -1,7 +1,7 @@
 'use strict';
 
-var Entity = require('./entity');
-var objectEach = require('../common/object-each');
+const Entity = require('./entity');
+//const objectEach = require('../common/object-each');
 
 class Enemy extends Entity {
     
@@ -30,8 +30,8 @@ class Enemy extends Entity {
         } else {
             this.detectTarget();
         }
-        objectEach(this.GAME.objects.Bullet.instances, bullet => {
-            if (bullet.creator !== this && this.x < bullet.x + 16 && this.x + 16 > bullet.x && this.y < bullet.y + 16 && this.y + 16 > bullet.y){
+        this.room.forEachInstance('Bullet', bullet => {
+            if (bullet.creator !== this && this.isTouching(bullet)){
                 this.hp = Math.max(0, this.hp - 1);console.log(this.hp);
                 if (!this.hp){
                     this.destroy();
@@ -42,14 +42,14 @@ class Enemy extends Entity {
     }
     
     destroy(){
-        this.GAME.create('ItemDrop', [this.x, this.y, 'potion']);
+        this.room.create('ItemDrop', [this.x, this.y, 'potion']);
         super.destroy();
     }
     
     detectTarget(){
         this.hspeed = 0;
         this.vspeed = 0;
-        objectEach(this.GAME.objects.Player.instances, player => {
+        this.room.forEachInstance('Player', player => {
             if (!this.player && this.distanceTo(player) < this.aggroRange){
                 this.target = player;
             }

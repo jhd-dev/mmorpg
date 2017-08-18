@@ -4,8 +4,6 @@ require('dotenv').load();
 const express = require('express');
 const session = require('express-session');
 const http = require('http');
-const fs = require('fs');
-const profiler = require('v8-profiler');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const passportSocketIo = require('passport.socketio');
@@ -13,7 +11,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const config = require('./server/config/config');
 const router = require('./server/routes/router');
-const Game = require('./server/game/game');
+const Game = require('./server/game-engine/game');
+const gameInput = require('./server/game/game-input');
 
 require('./server/config/passport')(passport);
 
@@ -59,13 +58,11 @@ io.use(passportSocketIo.authorize({
     //fail: onAuthorizeFail
 }));
 
-let GAME = new Game(['Player', 'Bullet', 'Enemy', 'ItemDrop']);
+let game = new Game(gameInput);
 
-io.sockets.on('connection', socket => GAME.onConnect(socket));
+io.sockets.on('connection', socket => game.onConnect(socket));
 
-GAME.start(config.FPS);
-
-setProfiling();
+game.start(config.FPS);
 
 /*function onAuthorizeSuccess(data, accept){
     return accept();
@@ -77,16 +74,3 @@ function onAuthorizeFail(data, message, err, accept){
     //console.log(data);
     return accept();
 }*/
-
-function setProfiling(){
-    profiler.startProfiling('1', true);
-    setTimeout(() => {
-        let profile1 = profiler.stopProfiling('1');
-        profile1.export((err, result) => {
-            if (err) throw err;
-            fs.writeFile('../profile.cpuprofile', result);
-            profile1.delete();
-            console.log('Profile saved.');
-        }, 10000);
-    });
-}

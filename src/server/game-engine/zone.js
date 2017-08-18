@@ -3,8 +3,6 @@
 const tmxParser = require('tmx-parser');
 const Room = require('./room');
 
-const mapDir = __dirname + '/maps/';
-
 class Zone {
     
     constructor(GAME, name, mapName){
@@ -26,7 +24,7 @@ class Zone {
             error: callback,
             success: console.log
         })*/
-        tmxParser.parseFile(mapDir + this.mapName + '.tmx', callback);
+        tmxParser.parseFile(this.GAME.mapDir + '/' + this.mapName + '.tmx', callback);
     }
     
     enter(client){

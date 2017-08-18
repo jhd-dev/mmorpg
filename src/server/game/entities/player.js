@@ -1,7 +1,7 @@
 'use strict';
 
 const Entity = require('./entity');
-const Inventory = require('./inventory');
+const Inventory = require('../systems/inventory');
 
 const rightKey = 68;
 const upKey = 87;
@@ -11,8 +11,8 @@ const downKey = 83;
 class Player extends Entity {
     
     static disconnect(socket){
-        delete Player.instances[socket.id];
         socket.player.destroy();
+        delete Player.instances[socket.id];
     }
     
     constructor(GAME, room){
@@ -34,14 +34,13 @@ class Player extends Entity {
     
     update(){
         this.updateSpeed();
-        Object.keys(this.room.entities.Bullet).forEach(bulletId => {
-            let bullet = this.room.entities.Bullet[bulletId];
+        this.room.forEachInstance('Bullet', bullet => {
             if (bullet.creator !== this && this.x < bullet.x + 16 && this.x + 16 > bullet.x && this.y < bullet.y + 16 && this.y + 16 > bullet.y){
                 this.hp = Math.max(0, this.hp - 1);
                 bullet.destroy();
             }
         });
-        Object.keys(this.room.entities.Enemy).map(id => this.room.entities.Enemy[id]).forEach(enemy => {
+        this.room.forEachInstance('Enemy', enemy => {
             if (this.isTouching(enemy)){
                 this.hp -= 0.1;
             }

@@ -15,7 +15,7 @@ class Room {
         this.height = map.height;
         this.clients = {};
         this.entities = {Entity: {}};
-        Object.keys(this.objects).forEach(className => {//console.log(className);
+        Object.keys(this.objects).forEach(className => {
             this.entities[className] = {};
         });
         this.prevPack = {
@@ -161,6 +161,16 @@ class Room {
             return true;
         }
         return true;
+    }
+    
+    checkSpecialTiles(entity){
+        
+    }
+    
+    forEachInstance(type, fn){
+        return Object.keys(this.entities[type]).map((instanceId, i, arr) => {
+            return fn(this.entities[type][instanceId], i, arr);
+        });
     }
     
 }

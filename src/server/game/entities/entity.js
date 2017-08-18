@@ -1,16 +1,19 @@
 'use strict';
 
+const randomstring = require("randomstring");
+const polygons = require('../systems/polygons');
+
 class Entity {
     
-    static generateId(){
-        let id;
-        do {
-            id = String(Math.round(Math.random() * Math.pow(10, 8)));
-        } while (this.instances[id]);
-        return id;
+    static generateId(len = 8){
+        return randomstring.generate(len); //String(Math.round(Math.random() * Math.pow(10, 8)));
     }
     
-    constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, shape = 'rect'){
+    get hitbox(){
+        return this.hitboxes[this.activeHitbox];
+    }
+    
+    constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, shape = 'rect', hitboxes = {}){
         this.GAME = GAME;
         this.room = room;
         this.type = this.constructor.name;
@@ -21,8 +24,12 @@ class Entity {
         this.width = width;
         this.height = height;
         this.shape = shape;
+        this.hitboxes = Object.assign({}, hitboxes, {
+            'normal': new polygons.Rectangle([x, y], x, y, width, height)
+        });
+        this.activeHitbox = 'normal';
         this.id = this.constructor.generateId();
-        this.constructor.instances[this.id] = this;
+        //this.constructor.instances[this.id] = this;
         this.exists = true;
         this.types = ['Entity'];
         this.timers = {};
@@ -41,14 +48,7 @@ class Entity {
     
     update(){
         this.updatePosition();
-        Object.keys(this.timers).forEach(name => {
-            let timer = this.timers[name];
-            if (!timer.count){
-                timer.action();
-                delete this.timers[name];
-            }
-            timer.count --;
-        });
+        this.updateTimers();
     }
     
     getClientPack(){
@@ -66,6 +66,17 @@ class Entity {
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
         }
+    }
+    
+    updateTimers(){
+        Object.keys(this.timers).forEach(name => {
+            let timer = this.timers[name];
+            if (!timer.count){
+                timer.action();
+                delete this.timers[name];
+            }
+            timer.count --;
+        });
     }
     
     distanceTo(entity){
@@ -89,22 +100,7 @@ class Entity {
     }
     
     isTouching(entity){
-        if (this.shape === 'rect'){
-            if (entity.shape === 'rect'){
-                return this.x < entity.x + entity.width
-                   && this.x + this.width > entity.x 
-                   && this.y < entity.y + entity.height 
-                   && this.height + this.y > entity.y;
-            }
-        } else if (this.shape === 'elipses'){
-            
-        } else {
-            return false;
-        }
-    }
-    
-    getPointOnEdge(h, v){ // -1, -1 = top-left; 0, 0 = center; 1, 1 = bottom-right;
-        return [this.x + h * this.width / 2, this.y + v * this.height / 2];
+        return this.hitbox.isTouching(entity.hitbox);
     }
     
     setTimer(name, fn, steps){
