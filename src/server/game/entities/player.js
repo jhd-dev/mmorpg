@@ -49,6 +49,7 @@ class Player extends Entity {
             this.hp = this.maxHp;
         }
         super.update();
+        console.log(this.hitbox.calcPoints);
     }
     
     updateSpeed(){

@@ -8,6 +8,14 @@ class Polygon extends SAT.Polygon {
         super(new SAT.V(...pos), points.map(([x, y]) => new SAT.V(x, y)));
     }
     
+    get boundingBox(){
+        let x = this.points.reduce((acc, cur) => Math.min(acc, cur.x), Infinity);
+        let y = this.points.reduce((acc, cur) => Math.min(acc, cur.y), Infinity);
+        let width = this.points.reduce((acc, cur) => Math.max(acc, cur.x), -Infinity) - x;
+        let height = this.points.reduce((acc, cur) => Math.max(acc, cur.y), -Infinity) - y;
+        return new Rectangle([this.x, this.y], x, y, width, height);
+    }
+    
     testCollision(polygon){
         let response = new SAT.Response();
         return {
@@ -20,19 +28,11 @@ class Polygon extends SAT.Polygon {
         return this.testCollision(polygon).collided;
     }
     
-    getBoundingBox(){
-        let x = this.points.reduce((acc, cur) => Math.min(acc, cur.x), Infinity);
-        let y = this.points.reduce((acc, cur) => Math.min(acc, cur.y), Infinity);
-        let width = this.points.reduce((acc, cur) => Math.max(acc, cur.x), -Infinity) - x;
-        let height = this.points.reduce((acc, cur) => Math.max(acc, cur.y), -Infinity) - y;
-        return new Rectangle([this.x, this.y], x, y, width, height);
-    }
-    
 }
 
 class Rectangle extends Polygon {
     
-    constructor(pos, x, y, width, height){
+    constructor(pos, x, y, width, height){//x=0;y=0;
         super(
             pos,
             [
@@ -80,6 +80,7 @@ class Circle extends Ellipse {
 }
 
 module.exports = {
+    Vector: SAT.Vector,
     Polygon,
     Rectangle,
     Ellipse,

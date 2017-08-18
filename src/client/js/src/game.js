@@ -34,6 +34,7 @@
     let clientId = '';
     let tileSize = 16;
     let fps = 60;
+    let showHitboxes = false;
     
     let background = new Image();
     background.src = '../img/grass.png';
@@ -49,6 +50,9 @@
         },
         debug: function(variable){
             socket.emit('clientDebug', variable + ': ' + eval(variable));
+        },
+        hitboxes: function(show = !showHitboxes){
+            showHitboxes = show;
         }
     };
     
@@ -247,6 +251,10 @@
                         console.warn('unrecognized type ' + entity.type);
                         break;
                 }
+                if (showHitboxes){
+                    ctx.strokeStyle = 'rgb(' + Math.floor(Math.random()*256) + ',' + Math.floor(Math.random()*256) + ',' + Math.floor(Math.random()*256) + ')';
+                    drawShape(entity.hitboxPoints.map(([x, y]) => getRelativeCoors([x, y])));
+                }
             });
     }
     
@@ -257,6 +265,20 @@
     function updatePosition(entity){
         entity.x += entity.hspeed / 2;
         entity.y += entity.vspeed / 2;
+    }
+    
+    function drawShape(points, fill = false){
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        points.forEach(coors => {
+            ctx.lineTo(coors[0], coors[1]);
+        });
+        ctx.closePath();
+        if (fill){
+            ctx.fill();
+        } else {
+            ctx.stroke();
+        }
     }
     
 })(io, jQuery, Vue);

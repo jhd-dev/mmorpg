@@ -1,6 +1,6 @@
 'use strict';
 
-const randomstring = require("randomstring");
+const randomstring = require('randomstring');
 const polygons = require('../systems/polygons');
 
 class Entity {
@@ -21,9 +21,9 @@ class Entity {
         this.height = height;
         this.shape = shape;
         this.hitboxes = Object.assign({}, hitboxes, {
-            'normal': new polygons.Rectangle([x, y], x, y, width, height)
+            "default": new polygons.Rectangle([x, y], 0, 0, width, height)
         });
-        this.activeHitbox = 'normal';
+        this.activeHitbox = 'default';
         this.id = this.constructor.generateId();
         //this.constructor.instances[this.id] = this;
         this.exists = true;
@@ -33,6 +33,10 @@ class Entity {
     
     get hitbox(){
         return this.hitboxes[this.activeHitbox];
+    }
+    
+    get hitboxPoints(){
+        return this.hitbox.calcPoints.map(vector => [vector.x, vector.y]);
     }
     
     destroy(){
@@ -66,6 +70,7 @@ class Entity {
             this.x = Math.round(this.x);
             this.y = Math.round(this.y);
         }
+        this.hitbox.setOffset(new polygons.Vector(this.x, this.y));
     }
     
     updateTimers(){
@@ -113,6 +118,6 @@ class Entity {
     
 }
 
-Entity.clientFormat = ['types', 'x', 'y', 'hspeed', 'vspeed'];
+Entity.clientFormat = ['types', 'x', 'y', 'hspeed', 'vspeed', 'hitboxPoints'];
 
 module.exports = Entity;
