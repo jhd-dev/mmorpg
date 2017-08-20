@@ -112,12 +112,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var tileSize = 16;
     var fps = 60;
     var showHitboxes = false;
-    var map = {};
-
-    var background = new Image();
-    background.src = '../img/grass.png';
-    var spritesheet = new Image();
-    spritesheet.src = '../img/spritesheet.png';
+    var sprites = {};
+    var currentMapName = '';
+    var updateInterval = null;
+    var mapDir = '../../img/maps';
 
     var commands = {
         help: function help() {
@@ -138,6 +136,36 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     var socket = io();
 
+    socket.on('prep', function (data) {
+        console.log('prep:', data);
+        currentMapName = data.mapName;
+        var spriteNames = Object.keys(data.sprites);
+        var spritesRemaining = spriteNames.length;
+        spriteNames.forEach(function (spriteName) {
+            sprites[spriteName] = new Image();
+            sprites[spriteName].src = data.sprites[spriteName];
+            sprites[spriteName].onload = function () {
+                spritesRemaining--;
+                if (!spritesRemaining) {
+                    sprites[data.mapName] = new Image();
+                    sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png';console.log(sprites[data.mapName].src);
+                    sprites[data.mapName].onload = function () {
+                        console.log(sprites[currentMapName]);
+                        socket.emit('prepComplete');
+                    };
+                }
+            };
+        });
+        if (!spritesRemaining) {
+            sprites[data.mapName] = new Image();
+            sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png';console.log(sprites[data.mapName].src);
+            sprites[data.mapName].onload = function () {
+                console.log(sprites[currentMapName]);
+                socket.emit('prepComplete');
+            };
+        }
+    });
+
     socket.on('init', function (data) {
         console.log(data);
         entities = data.entities;
@@ -146,7 +174,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             entities[id].type = entities[id].types[entities[id].types.length - 1];
         });
         clientId = data.clientId;
-        setInterval(update, 1000 / fps);
+        //currentMapName = data.mapName;
+        updateInterval = setInterval(update, 1000 / fps);
     });
 
     socket.on('update', function (data) {
@@ -295,9 +324,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                 ctx.drawImage(spritesheet, (tile * (tileSize + 1)) % 968, tile * (tileSize + 1), tileSize, tileSize, left + x * tileSize, top + y * tileSize, tileSize, tileSize);
             });
         });*/
-        map.layers.forEach(function (layer) {
-            layer.tiles.forEach(function (tile) {});
-        });
+        /*map.layers.forEach(layer => {
+            layer.tiles.forEach(tile => {
+                
+            });
+        });*/
+        console.log(sprites[currentMapName], currentMapName, sprites);
+        ctx.drawImage(sprites[currentMapName], left, top);
     }
 
     function drawEntities() {

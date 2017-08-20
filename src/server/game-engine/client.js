@@ -43,7 +43,7 @@ class Client {
             this.player.name = 'Guest' + Math.floor(Math.random() * Math.pow(10, 5));
             this.player.zone = this.GAME.zones['grass'];
         }
-        this.player.zone.enter(this);
+        this.player.zone.prepare(this);
         this.socketEvents();
     }
     
@@ -51,12 +51,14 @@ class Client {
         console.log('removed socket');
         if (this.socket.request.user){
             this.saveUser();
-        }
+        }console.log(this.player);
         this.player.room.leave(this);
     }
     
     socketEvents(){console.log('events');
         this.socket.on('disconnect', () => this.onDisconnect());
+        
+        this.socket.on('prepComplete', () => this.onPrepComplete());
         
         this.socket.on('chatMsg', () => this.onChatMsg());
         
@@ -86,6 +88,14 @@ class Client {
         }, (err, user) => {
             if (err) throw err;
         });
+    }
+    
+    sendPrepPack(data){
+        this.socket.emit('prep', data);
+    }
+    
+    onPrepComplete(){
+        this.player.zone.enter(this);
     }
     
     sendInitPack(data){

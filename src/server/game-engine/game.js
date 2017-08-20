@@ -13,7 +13,7 @@ class Game {
         //console.log(this.objects);
         this.zones = {};
         Object.keys(input.zones).forEach(zoneName => {
-            this.zones[zoneName] = new Zone(this, zoneName, input.zones[zoneName].mapName);
+            this.zones[zoneName] = new Zone(this, zoneName, input.zones[zoneName].mapName, input.zones[zoneName].sprites);
         });
         this.updateInterval = null;
     }

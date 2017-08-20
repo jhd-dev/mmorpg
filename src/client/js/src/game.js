@@ -35,12 +35,10 @@
     let tileSize = 16;
     let fps = 60;
     let showHitboxes = false;
-    let map = {};
-    
-    let background = new Image();
-    background.src = '../img/grass.png';
-    let spritesheet = new Image();
-    spritesheet.src = '../img/spritesheet.png';
+    let sprites = {};
+    let currentMapName = '';
+    let updateInterval = null;
+    let mapDir = '../../img/maps';
     
     const commands = {
         help: function(){
@@ -59,6 +57,33 @@
     
     let socket = io();
     
+    socket.on('prep', data => {console.log('prep:', data);
+        currentMapName = data.mapName;
+        let spriteNames = Object.keys(data.sprites);
+        let spritesRemaining = spriteNames.length;
+        spriteNames.forEach(spriteName => {
+            sprites[spriteName] = new Image();
+            sprites[spriteName].src = data.sprites[spriteName];
+            sprites[spriteName].onload = () => {
+                spritesRemaining --;
+                if (!spritesRemaining){
+                    sprites[data.mapName] = new Image();
+                    sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png'; console.log(sprites[data.mapName].src);
+                    sprites[data.mapName].onload = () => {console.log(sprites[currentMapName]);
+                        socket.emit('prepComplete');
+                    };
+                }
+            };
+        });
+        if (!spritesRemaining){
+            sprites[data.mapName] = new Image();
+            sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png'; console.log(sprites[data.mapName].src);
+            sprites[data.mapName].onload = () => {console.log(sprites[currentMapName]);
+                socket.emit('prepComplete');
+            };
+        }
+    });
+    
     socket.on('init', function(data){console.log(data);
         entities = data.entities;
         Object.keys(entities).forEach(id => {
@@ -66,7 +91,8 @@
             entities[id].type = entities[id].types[entities[id].types.length - 1];
         });
         clientId = data.clientId;
-        setInterval(update, 1000 / fps);
+        //currentMapName = data.mapName;
+        updateInterval = setInterval(update, 1000 / fps);
     });
     
     socket.on('update', function(data){//console.log(entities, clientId);//console.log(data);
@@ -199,11 +225,13 @@
                 ctx.drawImage(spritesheet, (tile * (tileSize + 1)) % 968, tile * (tileSize + 1), tileSize, tileSize, left + x * tileSize, top + y * tileSize, tileSize, tileSize);
             });
         });*/
-        map.layers.forEach(layer => {
+        /*map.layers.forEach(layer => {
             layer.tiles.forEach(tile => {
                 
             });
-        });
+        });*/
+        console.log(sprites[currentMapName], currentMapName, sprites);
+        ctx.drawImage(sprites[currentMapName], left, top);
     }
     
     function drawEntities(){

@@ -5,7 +5,7 @@
  */
 class Room {
     
-    constructor(GAME, zone, map){
+    constructor(GAME, zone, map, mapName){
         this.id = String(Math.random());
         this.GAME = GAME;
         this.objects = this.GAME.objects;
@@ -46,7 +46,7 @@ class Room {
         return {
             entities: entities,
             clientId: client.player.id,
-            map: this.map
+            map: this.mapName
         };
     }
     

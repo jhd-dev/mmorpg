@@ -13,7 +13,8 @@ module.exports = {
     zones: {
         "grass": {
             mapName: 'map1',
-            dir: __dirname + '/maps/map1.tmx'
+            dir: __dirname + '/maps/map1.tmx',
+            sprites: {}
         }
     }
 };
