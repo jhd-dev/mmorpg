@@ -35,6 +35,7 @@
     let tileSize = 16;
     let fps = 60;
     let showHitboxes = false;
+    let map = {};
     
     let background = new Image();
     background.src = '../img/grass.png';
@@ -188,16 +189,21 @@
         let coors = getRelativeCoors([0, 0]);
         let left = coors[0];
         let top = coors[1];
-        for (let x = 0; x < width; x += 480){
+        /*for (let x = 0; x < width; x += 480){
             for (let y = 0; y < height; y += 480){
                 ctx.drawImage(background, left + x, top + y, 480, 480);
             }
-        }
+        }*/
         /*map.forEach((row, y) => {
             row.forEach((tile, x) => {
                 ctx.drawImage(spritesheet, (tile * (tileSize + 1)) % 968, tile * (tileSize + 1), tileSize, tileSize, left + x * tileSize, top + y * tileSize, tileSize, tileSize);
             });
         });*/
+        map.layers.forEach(layer => {
+            layer.tiles.forEach(tile => {
+                
+            });
+        });
     }
     
     function drawEntities(){

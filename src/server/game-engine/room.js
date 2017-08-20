@@ -45,7 +45,8 @@ class Room {
         });
         return {
             entities: entities,
-            clientId: client.player.id
+            clientId: client.player.id,
+            map: this.map
         };
     }
     

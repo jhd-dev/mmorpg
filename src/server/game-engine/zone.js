@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const tmxParser = require('tmx-parser');
 const Room = require('./room');
 
@@ -10,10 +11,9 @@ class Zone {
         this.name = name;
         this.mapName = mapName;
         this.rooms = [];
-        this.getMap((err, map) => {
-            if (err) throw err;
+        this.getMap((map, mapImage) => {console.log(map);
             this.map = map;
-            this.rooms[0] = new Room(GAME, this, this.map);
+            this.createRoom();
         });
     }
     
@@ -24,7 +24,14 @@ class Zone {
             error: callback,
             success: console.log
         })*/
-        tmxParser.parseFile(this.GAME.mapDir + '/' + this.mapName + '.tmx', callback);
+        tmxParser.parseFile(this.GAME.mapDir + '/' + this.mapName + '.tmx', (err, map) => {
+            if (err) throw err;
+            let mapImage = new Image();
+            mapImage.src = this.GAME.mapDir + '/' + this.mapName + '.png';
+            mapImage.onload = () => {
+                callback(map, mapImage);
+            };
+        });
     }
     
     enter(client){
@@ -41,6 +48,10 @@ class Zone {
     
     create(className, args = []){
         return new this.objects[className](this, ...args);
+    }
+    
+    createRoom(){
+        this.rooms.push(new Room(this.GAME, this, this.map));
     }
     
     eachSocket(fn){
