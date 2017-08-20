@@ -235,8 +235,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             console.log('click');
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
-                x: e.clientX - rect.left - width / 2 + entities[clientId].x,
-                y: e.clientY - rect.top - height / 2 + entities[clientId].y
+                x: Math.max(e.clientX, e.clientX - width / 2 + entities[clientId].x) - rect.left,
+                y: Math.max(e.clientY, e.clientY - height / 2 + entities[clientId].y) - rect.top
             });
         });
 
@@ -399,7 +399,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function getRelativeCoors(coors) {
-        return entities[clientId] ? [coors[0] - entities[clientId].x + width / 2, coors[1] - entities[clientId].y + height / 2] : [0, 0];
+        return entities[clientId] ? [Math.min(coors[0], coors[0] - entities[clientId].x + width / 2), Math.min(coors[1], coors[1] - entities[clientId].y + height / 2)] : [0, 0];
     }
 
     function updatePosition(entity) {
