@@ -10,9 +10,22 @@ body {
     color: #ddd;
 }
 
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 input {
     font-family: inherit;
     font-size: inherit;
+}
+
+.menu-choice {
+    margin: 16px;
+}
+
+.menu-choice:hover {
+    text-decoration: underline;
 }
 
 #col-main {
