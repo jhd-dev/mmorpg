@@ -32,6 +32,10 @@ module.exports = function(passport){
     
     router.get('/verify/:id', (req, res) => emailVerifier.verifyUser(req, res));
     
+    router.get('/login', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/../../client/views/login.html'));
+    });
+    
     router.post('/login', passport.authenticate('local-login', {
         successRedirect: '/play',
         failureRedirect: '/login-fail'

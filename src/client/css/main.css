@@ -23,6 +23,29 @@ input {
     float: right;
 }
 
-#login-form {
+#auth-form-cont {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+
+.login-cont {
+    display: inline-block;
+    margin: 16px;
+    padding: 16px;
+    
+}
+
+.login-form {
     text-align: right;
+}
+
+.login-label {
+    display: inline-block;
+    width: 210px;
+    text-align: right;
+}
+
+.login-submit {
+    margin: 16px;
 }
