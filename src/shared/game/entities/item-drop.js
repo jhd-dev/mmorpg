@@ -6,7 +6,8 @@ class ItemDrop extends Entity {
     
     constructor(GAME, room, x, y, item){
         super(GAME, room, x, y, 16, 16, 'rect');
-        this.iten = item;
+        this.item = item;
+        this.types.push('ItemDrop');
     }
     
     update(){
