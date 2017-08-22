@@ -86,6 +86,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         x: 0,
         y: 0
     };
+    var viewScale = 1;
+    var viewZoom = 4;
 
     var rightKey = 68;
     var upKey = 87;
@@ -237,8 +239,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             console.log('click');
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
-                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + camera.x) - rect.left,
-                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + camera.y) - rect.top
+                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + camera.x) / viewScale - rect.left,
+                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + camera.y) / viewScale - rect.top
             });
         });
 
@@ -337,7 +339,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             });
         });*/
         //dddconsole.log(sprites[currentMapName], currentMapName, sprites);
-        ctx.drawImage(sprites[currentMapName], left, top);
+        var map = sprites[currentMapName];
+        ctx.drawImage(map, left, top, map.width * viewScale, map.height * viewScale);
     }
 
     function drawEntities() {
@@ -353,40 +356,40 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                 case 'Player':
                     updatePosition(entity);
                     ctx.fillStyle = 'black';
-                    ctx.fillText(entity.name, x + 8, y - 12);
-                    ctx.strokeRect(x, y, 16, 16);
+                    ctx.fillText(entity.name, x + 8 * viewScale, y - 12 * viewScale);
+                    ctx.strokeRect(x, y, 16 * viewScale, 16 * viewScale);
                     ctx.fillStyle = entity.color;
-                    ctx.fillRect(x, y, 16, 16);
+                    ctx.fillRect(x, y, 16 * viewScale, 16 * viewScale);
                     //if (id === clientId){
                     ctx.fillStyle = 'black';
-                    ctx.fillRect(x - 4, y - 8, 24, 4);
+                    ctx.fillRect(x - 4 * viewScale, y - 8 * viewScale, 24 * viewScale, 4 * viewScale);
                     ctx.fillStyle = 'red';
-                    ctx.fillRect(x - 4, y - 8, 24 * entity.hp / entity.maxHp, 4);
+                    ctx.fillRect(x - 4 * viewScale, y - 8 * viewScale, 24 * viewScale * entity.hp / entity.maxHp, 4 * viewScale);
                     //}
                     break;
                 case 'Bullet':
                     updatePosition(entity);
-                    ctx.strokeRect(x, y, 16, 16);
+                    ctx.strokeRect(x, y, 16 * viewScale, 16 * viewScale);
                     ctx.fillStyle = 'black';
-                    ctx.fillRect(x, y, 16, 16);
+                    ctx.fillRect(x, y, 16 * viewScale, 16 * viewScale);
                     break;
                 case 'Enemy':
                     updatePosition(entity);
-                    ctx.strokeRect(x, y, 16, 16);
+                    ctx.strokeRect(x, y, 16 * viewScale, 16 * viewScale);
                     ctx.fillStyle = '#922';
-                    ctx.fillRect(x, y, 16, 16);
+                    ctx.fillRect(x, y, 16 * viewScale, 16 * viewScale);
                     ctx.fillStyle = 'black';
-                    ctx.fillRect(x - 4, y - 8, 24, 4);
+                    ctx.fillRect(x - 4 * viewScale, y - 8 * viewScale, 24 * viewScale, 4 * viewScale);
                     ctx.fillStyle = 'red';
-                    ctx.fillRect(x - 4, y - 8, 24 * entity.hp / entity.maxHp, 4);
+                    ctx.fillRect(x - 4 * viewScale, y - 8 * viewScale, 24 * viewScale * entity.hp / entity.maxHp, 4 * viewScale);
                     ctx.fillStyle = 'black';
-                    ctx.fillText(entity.name, x + 8, y - 12);
+                    ctx.fillText(entity.name, x + 8 * viewScale, y - 12 * viewScale);
                     break;
                 case 'ItemDrop':
                     updatePosition(entity);
-                    ctx.strokeRect(x, y, 16, 16);
+                    ctx.strokeRect(x, y, 16 * viewScale, 16 * viewScale);
                     ctx.fillStyle = 'pink';
-                    ctx.fillRect(x, y, 16, 16);
+                    ctx.fillRect(x, y, 16 * viewScale, 1 * viewScale);
                     break;
                 default:
                     console.warn('unrecognized type ' + entity.type);
@@ -406,7 +409,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function getRelativeCoors(coors) {
-        return entities[clientId] ? [Math.min(coors[0], coors[0] - camera.x + canvasWidth / 2), Math.min(coors[1], coors[1] - camera.y + canvasHeight / 2)] : [0, 0];
+        return entities[clientId] ? [viewScale * Math.min(coors[0], coors[0] - camera.x + canvasWidth / 2), viewScale * Math.min(coors[1], coors[1] - camera.y + canvasHeight / 2)] : [0, 0];
     }
 
     function updatePosition(entity) {
@@ -435,6 +438,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         canvasHeight = window.innerHeight;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
+        viewScale = Math.floor(Math.min(Math.log2(canvasWidth), Math.log2(canvasHeight))) / viewZoom;
         setCanvasSettings();
     }
 
