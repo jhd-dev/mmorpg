@@ -80,6 +80,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     var width = 800;
     var height = 600;
+    var canvasWidth = 800;
+    var canvasHeight = 600;
 
     var rightKey = 68;
     var upKey = 87;
@@ -99,11 +101,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     var canvas = document.getElementById('viewport');
     var ctx = canvas.getContext('2d');
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
-    ctx.imageSmoothingEnabled = false;
-    ctx.textAlign = 'center';
+    resizeCanvas();
 
     var textboxFocused = false;
 
@@ -235,8 +233,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             console.log('click');
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
-                x: Math.max(e.clientX, e.clientX - width / 2 + entities[clientId].x) - rect.left,
-                y: Math.max(e.clientY, e.clientY - height / 2 + entities[clientId].y) - rect.top
+                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + entities[clientId].x) - rect.left,
+                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + entities[clientId].y) - rect.top
             });
         });
 
@@ -293,6 +291,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         });
     });
 
+    $(window).on('resize', function () {
+        resizeCanvas();
+    });
+
     function updateException(objectType, instanceId, changedProp) {
         var object = entities[instanceId];
         if (objectType === 'Player') {
@@ -305,7 +307,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function update() {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
         drawMap();
         drawEntities();
     }
@@ -399,7 +401,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function getRelativeCoors(coors) {
-        return entities[clientId] ? [Math.min(coors[0], coors[0] - entities[clientId].x + width / 2), Math.min(coors[1], coors[1] - entities[clientId].y + height / 2)] : [0, 0];
+        return entities[clientId] ? [Math.min(coors[0], coors[0] - entities[clientId].x + canvasWidth / 2), Math.min(coors[1], coors[1] - entities[clientId].y + canvasHeight / 2)] : [0, 0];
     }
 
     function updatePosition(entity) {
@@ -421,6 +423,22 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         } else {
             ctx.stroke();
         }
+    }
+
+    function resizeCanvas() {
+        canvasWidth = window.innerWidth;
+        canvasHeight = window.innerHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        setCanvasSettings();
+    }
+
+    function setCanvasSettings() {
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+        ctx.textAlign = 'center';
     }
 })(io, jQuery, Vue);
 

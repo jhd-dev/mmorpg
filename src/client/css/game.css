@@ -1,7 +1,12 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
 #game {
     display: inline-block;
-    border: 1px solid #333;
-    height: 600px;
+    /*border: 1px solid #333;*/
+    /*height: 600px;*/
     -webkit-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
     box-shadow: 0px 3px 12px 1px rgba(0,0,0,0.75);
@@ -12,6 +17,8 @@
 
 #chat-cont {
     display: table;
+    position: absolute;
+    opacity: 0;
     float: left;
     height: 600px;
     background-color: #eee;
@@ -42,6 +49,8 @@
 
 #inventory-cont {
     display: inline-table;
+    position: absolute;
+    opacity: 0;
     background-color: #eee;
     color: #000;
     text-align: left;
