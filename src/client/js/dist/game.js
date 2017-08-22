@@ -82,6 +82,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var height = 600;
     var canvasWidth = 800;
     var canvasHeight = 600;
+    var camera = {
+        x: 0,
+        y: 0
+    };
 
     var rightKey = 68;
     var upKey = 87;
@@ -146,7 +150,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                 spritesRemaining--;
                 if (!spritesRemaining) {
                     sprites[data.mapName] = new Image();
-                    sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png';console.log(sprites[data.mapName].src);
+                    sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png'; //console.log(sprites[data.mapName].src);
                     sprites[data.mapName].onload = function () {
                         console.log(sprites[currentMapName]);
                         socket.emit('prepComplete');
@@ -156,7 +160,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         });
         if (!spritesRemaining) {
             sprites[data.mapName] = new Image();
-            sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png';console.log(sprites[data.mapName].src);
+            sprites[data.mapName].src = mapDir + '/' + data.mapName + '.png'; //console.log(sprites[data.mapName].src);
             sprites[data.mapName].onload = function () {
                 console.log(sprites[currentMapName]);
                 socket.emit('prepComplete');
@@ -233,8 +237,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             console.log('click');
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
-                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + entities[clientId].x) - rect.left,
-                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + entities[clientId].y) - rect.top
+                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + camera.x) - rect.left,
+                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + camera.y) - rect.top
             });
         });
 
@@ -307,7 +311,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function update() {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        clearCanvas();
+        updateCamera();
         drawMap();
         drawEntities();
     }
@@ -331,7 +336,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
                 
             });
         });*/
-        console.log(sprites[currentMapName], currentMapName, sprites);
+        //dddconsole.log(sprites[currentMapName], currentMapName, sprites);
         ctx.drawImage(sprites[currentMapName], left, top);
     }
 
@@ -401,7 +406,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function getRelativeCoors(coors) {
-        return entities[clientId] ? [Math.min(coors[0], coors[0] - entities[clientId].x + canvasWidth / 2), Math.min(coors[1], coors[1] - entities[clientId].y + canvasHeight / 2)] : [0, 0];
+        return entities[clientId] ? [Math.min(coors[0], coors[0] - camera.x + canvasWidth / 2), Math.min(coors[1], coors[1] - camera.y + canvasHeight / 2)] : [0, 0];
     }
 
     function updatePosition(entity) {
@@ -439,6 +444,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         ctx.msImageSmoothingEnabled = false;
         ctx.imageSmoothingEnabled = false;
         ctx.textAlign = 'center';
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    function updateCamera() {
+        camera.x = Math.max(canvasWidth / 2, entities[clientId].x);
+        camera.y = Math.max(canvasHeight / 2, entities[clientId].y);
     }
 })(io, jQuery, Vue);
 

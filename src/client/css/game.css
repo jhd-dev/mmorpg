@@ -1,3 +1,6 @@
+@keyframes showChat {}
+@keyframes showInventory {}
+
 body {
     margin: 0;
     overflow: hidden;
@@ -16,13 +19,18 @@ body {
 }
 
 #chat-cont {
-    display: table;
+    display: none;
     position: absolute;
     opacity: 0;
     float: left;
     height: 600px;
     background-color: #eee;
     color: #000;
+}
+
+#chat-cont.showing {
+    animation: showChat 1s 1;
+    display: table;
 }
 
 #chat {
@@ -45,15 +53,21 @@ body {
 #viewport {
     display: inline-block;
     background-color: #ddd;
+    z-index: 5;
 }
 
 #inventory-cont {
-    display: inline-table;
+    display: none;
     position: absolute;
     opacity: 0;
     background-color: #eee;
     color: #000;
     text-align: left;
+}
+
+#inventory-cont.showing {
+    animation: showInventory 1s 1;
+    display: inline-table;
 }
 
 #inventory {
