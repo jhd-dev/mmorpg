@@ -6,7 +6,7 @@ const Entity = require('./entity');
 class Enemy extends Entity {
     
     constructor(GAME, room, x = 0, y = 0, name = '', power = 0, aggroRange = Infinity, aggroSpeed = 1, accuracy = 1, foresight = 0){
-        super(GAME, room, x, y, 16, 16, 'rect');
+        super(GAME, room, x, y, 16, 16);
         this.types.push('Enemy');
         this.name = name;
         this.power = power;

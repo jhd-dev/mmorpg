@@ -4,8 +4,8 @@ const Entity = require('./entity');
 
 class Bullet extends Entity {
     
-    constructor(GAME, room, creator, angle, width = 16, height = 16, shape = 'rectangle'){
-        super(GAME, room, creator.x, creator.y, width, height, shape);
+    constructor(GAME, room, creator, angle, width = 16, height = 16){
+        super(GAME, room, creator.x, creator.y, width, height);
         this.types.push('Bullet');
         this.creator = creator;
         this.hspeed = Math.cos(angle) * 5;

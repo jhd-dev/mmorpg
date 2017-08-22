@@ -9,7 +9,7 @@ class Entity {
         return randomstring.generate(len); //String(Math.round(Math.random() * Math.pow(10, 8)));
     }
     
-    constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, shape = 'rect', hitboxes = {}){
+    constructor(GAME, room, x = 0, y = 0, width = 0, height = 0, hitboxes = {}){
         this.GAME = GAME;
         this.room = room;
         this.type = this.constructor.name;
@@ -19,7 +19,6 @@ class Entity {
         this.vspeed = 0;
         this.width = width;
         this.height = height;
-        this.shape = shape;
         this.hitboxes = Object.assign({}, hitboxes, {
             "default": new polygons.Rectangle([x, y], 0, 0, width, height)
         });

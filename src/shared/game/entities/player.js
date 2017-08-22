@@ -16,7 +16,7 @@ class Player extends Entity {
     }
     
     constructor(GAME, room){
-        super(GAME, room, 0, 0, 16, 16, 'rect');
+        super(GAME, room, 0, 0, 16, 16);
         this.name = 'Guest' + String(Math.random()).substr(2, 4);
         this.keys = new Array(300).fill(false);
         this.color = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
