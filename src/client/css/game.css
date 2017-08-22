@@ -18,6 +18,33 @@ body {
     -ms-user-select: none;
 }
 
+#gui {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.gui-btn {
+    position: absolute;
+    background-color: gray;
+    color: white;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#show-chat-btn {
+    left: 8px;
+    top: 8px;
+}
+
+#show-inventory-btn {
+    text-align: right;
+    right: 8px;
+    top: 8px;
+}
+
 #chat-cont {
     display: none;
     position: absolute;
