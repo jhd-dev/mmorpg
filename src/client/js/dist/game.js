@@ -248,6 +248,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             e.preventDefault();
         });
 
+        $('#show-chat-btn').on('click', showChat);
+
+        $('#show-inventory-btn').on('click', showInventory);
+
         $('#chat-input, .login-input').on("focus", function () {
             textboxFocused = true;
         }).on("blur", function () {
@@ -438,7 +442,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         canvasHeight = window.innerHeight;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-        viewScale = Math.floor(Math.min(Math.log2(canvasWidth), Math.log2(canvasHeight))) / viewZoom;
+        viewScale = Math.max(1, Math.floor(Math.min(Math.log2(canvasWidth), Math.log2(canvasHeight))) / viewZoom);
         setCanvasSettings();
     }
 
@@ -457,6 +461,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function updateCamera() {
         camera.x = Math.max(canvasWidth / 2, entities[clientId].x);
         camera.y = Math.max(canvasHeight / 2, entities[clientId].y);
+    }
+
+    function showChat() {
+        $('#chat-cont').toggleClass('showing');
+    }
+
+    function showInventory() {
+        $('#inventory-cont').toggleClass('showing');
     }
 })(io, jQuery, Vue);
 
