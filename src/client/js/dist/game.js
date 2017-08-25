@@ -243,8 +243,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             console.log('click');
             var rect = canvas.getBoundingClientRect();
             socket.emit('click', {
-                x: Math.max(e.clientX, e.clientX - canvasWidth / 2 + camera.x) / viewScale - rect.left,
-                y: Math.max(e.clientY, e.clientY - canvasHeight / 2 + camera.y) / viewScale - rect.top
+                x: Math.max(e.clientX, e.clientX - canvasCenter.x + camera.x * viewScale) / viewScale - rect.left,
+                y: Math.max(e.clientY, e.clientY - canvasCenter.y + camera.y * viewScale) / viewScale - rect.top
             });
         });
 
