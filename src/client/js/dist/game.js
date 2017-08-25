@@ -78,13 +78,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function (io, $, Vue) {
     'use strict';
 
-    var width = 800;
-    var height = 600;
     var canvasWidth = 800;
     var canvasHeight = 600;
+    var canvasCenter = {
+        x: 400,
+        y: 300
+    };
     var camera = {
         x: 0,
-        y: 0
+        y: 0,
+        hspeed: 0,
+        vspeed: 0
     };
     var viewScale = 1;
     var viewZoom = 4;
@@ -413,7 +417,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function getRelativeCoors(coors) {
-        return entities[clientId] ? [viewScale * Math.min(coors[0], coors[0] - camera.x + canvasWidth / 2), viewScale * Math.min(coors[1], coors[1] - camera.y + canvasHeight / 2)] : [0, 0];
+        return entities[clientId] ? [viewScale * Math.min(coors[0], coors[0] - camera.x + canvasCenter.x / viewScale), viewScale * Math.min(coors[1], coors[1] - camera.y + canvasCenter.y / viewScale)] : [canvasCenter.x, canvasCenter.y];
     }
 
     function updatePosition(entity) {
@@ -438,12 +442,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function resizeCanvas() {
+        var tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvasWidth;
+        tempCanvas.height = canvasHeight;
+        var tempContext = tempCanvas.getContext("2d");
+        tempContext.drawImage(ctx.canvas, 0, 0);
+
         canvasWidth = window.innerWidth;
         canvasHeight = window.innerHeight;
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-        viewScale = Math.max(1, Math.floor(Math.min(Math.log2(canvasWidth), Math.log2(canvasHeight))) / viewZoom);
+        canvasCenter.x = canvasWidth / 2;
+        canvasCenter.y = canvasHeight / 2;
+        viewScale = Math.max(1, Math.floor(Math.log2(Math.min(canvasWidth, canvasHeight)) / viewZoom));
         setCanvasSettings();
+        ctx.drawImage(tempContext.canvas, 0, 0);
     }
 
     function setCanvasSettings() {
@@ -455,12 +468,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function clearCanvas() {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        //ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
     function updateCamera() {
-        camera.x = Math.max(canvasWidth / 2, entities[clientId].x);
-        camera.y = Math.max(canvasHeight / 2, entities[clientId].y);
+        camera.x = Math.max(canvasCenter.x / viewScale, entities[clientId].x);
+        camera.y = Math.max(canvasCenter.y / viewScale, entities[clientId].y);
+        //console.log('Camera:  ' + camera.x + ', ' + camera.y);
+        //console.log('Player:  ' + entities[clientId].x + ', ' + entities[clientId].y + '  ==>  ' + getRelativeCoors([entities[clientId].x, entities[clientId].y], true));
     }
 
     function showChat() {
@@ -468,7 +483,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
 
     function showInventory() {
-        $('#inventory-cont').toggleClass('showing');
+        //$('#inventory-cont').toggleClass('showing');
     }
 })(io, jQuery, Vue);
 
