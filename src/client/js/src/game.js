@@ -171,10 +171,10 @@
                     if (commands[inputs[0]]){
                         commands[inputs[0]].apply(null, inputs.slice(1));
                     } else {
-                        socket.emit('chatMsg', message.substr(0, 140));
+                        socket.emit('chatMsg', { message: message.substr(0, 140) });
                     }
                 } else {
-                    socket.emit('chatMsg', message.substr(0, 140));
+                    socket.emit('chatMsg', { message: message.substr(0, 140) });
                 }
                 $('#chat-input').blur();
                 $('#chat-input').val('');

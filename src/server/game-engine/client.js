@@ -60,7 +60,7 @@ class Client {
         
         this.socket.on('prepComplete', () => this.onPrepComplete());
         
-        this.socket.on('chatMsg', () => this.onChatMsg());
+        this.socket.on('chatMsg', data => this.onChatMsg(data));
         
         this.socket.on('clientDebug', data => {
             console.log(data);
@@ -107,23 +107,25 @@ class Client {
     }
     
     onChatMsg(data){
-        if (data.charAt(0) === '/'){
+        let message = data.message;
+        if (message.charAt(0) === '/'){
             let inputs = data.substr(1).split(' '); console.log(inputs);
             if (this.chatCommands[inputs[0]]){
                 this.chatCommands[inputs[0]].apply(null, [this.socket].concat(inputs.slice(1)));
             }
         } else {
-            this.GAME.eachSocket(socket => {
-                if (data.length > 0){
-                    //console.log(GAME);
-                    socket.emit('chatMsg', {
-                        name: this.player.name,
-                        msg: data,
-                        type: 'normal'
-                    });
-                }
-            });
+            if (message.length > 0){
+                this.player.room.forEachClient(client => client.recieveChatMessage(this.player.name, message, 'normal'));
+            }
         }
+    }
+    
+    recieveChatMessage(name, message, type){
+        this.socket.emit('chatMsg', {
+            name: name,
+            msg: message,
+            type: type
+        });
     }
     
 }

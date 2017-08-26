@@ -175,6 +175,12 @@ class Room {
         });
     }
     
+    forEachClient(fn, exception = null){
+        return Object.keys(this.clients).map((id, i, arr) => {
+            return fn(this.clients[id], i, arr);
+        });
+    }
+    
 }
 
 module.exports = Room;
