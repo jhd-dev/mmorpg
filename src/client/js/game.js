@@ -46,7 +46,7 @@
     let sprites = {};
     let currentMapName = '';
     let updateInterval = null;
-    let mapDir = '../../img/maps';
+    let mapDir = '../img/maps';
     
     const commands = {
         help: function(){
