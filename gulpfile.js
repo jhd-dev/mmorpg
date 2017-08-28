@@ -6,10 +6,17 @@ var ts = require('gulp-typescript');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
 
+var base = './src';
+var dest = './dist';
 //var tsProject = ts.createProject();
 
+gulp.task('copy-files', function(){
+    return gulp.src(['./src/client/img/**/*', './src/client/fonts/**/*', './src/shared/game/maps/**/*'], { base: base })
+        .pipe(gulp.dest(dest));
+});
+
 gulp.task('server-typescript', function(){
-    return gulp.src(['src/**/*.ts', 'src/**/*.js'], { base: './src' })
+    return gulp.src(['./src/**/*.ts', './src/**/*.js'], { base: base })
         .pipe(ts({
             exclude: 'node_modules',
             types: ['node'],
@@ -29,7 +36,7 @@ gulp.task('server-typescript', function(){
             ]
         }))
         //.pipe(uglify())
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest(dest));
 });
 
 gulp.task('sass', function(){
