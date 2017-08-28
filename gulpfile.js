@@ -11,12 +11,12 @@ var dest = './dist';
 //var tsProject = ts.createProject();
 
 gulp.task('copy-files', function(){
-    return gulp.src(['./src/client/img/**/*', './src/client/fonts/**/*', './src/shared/game/maps/**/*'], { base: base })
+    return gulp.src(['./src/client/views/**/*', './src/client/img/**/*', './src/client/fonts/**/*', './src/shared/game/maps/**/*', './src/**/vendor/*.js'], { base: base })
         .pipe(gulp.dest(dest));
 });
 
 gulp.task('typescript', function(){
-    return gulp.src(['./src/**/*.ts', './src/**/*.js'], { base: base })
+    return gulp.src(['./src/**/*.ts', './src/**/*.js', '!./src/**/vendor/*.js'], { base: base })
         .pipe(ts({
             exclude: 'node_modules',
             types: ['node'],

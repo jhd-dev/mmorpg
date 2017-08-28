@@ -2,7 +2,7 @@
   "name": "mmorpg",
   "version": "0.0.1",
   "description": "An HTML5 online multiplayer game powered by Socket.io",
-  "main": "src/app.js",
+  "main": "dist/app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/porygonj/mmorpg.git"
@@ -30,23 +30,18 @@
   "devDependencies": {
     "@types/node": "^8.0.25",
     "babel-core": "^6.0.0",
-    "babel-loader": "^6.0.0",
     "babel-preset-latest": "^6.0.0",
     "cross-env": "^3.0.0",
-    "css-loader": "^0.25.0",
-    "file-loader": "^0.9.0",
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0",
     "gulp-typescript": "^3.2.2",
     "gulp-uglify": "^3.0.0",
     "typescript": "^2.4.2",
-    "webpack": "^2.2.0",
-    "webpack-dev-server": "^2.2.0"
   },
   "scripts": {
-    "start": "node ./src/app.js",
-    "dev": "cross-env NODE_ENV=development webpack --progress --watch",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "start": "node ./dist/app.js",
+    "dev": "gulp watch:build",
+    "build": "gulp build",
     "dev-database": "mongod --dbpath=/data --port 27017"
   },
   "author": "Jonathan Doliver <porygonj@gmail.com>"
