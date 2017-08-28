@@ -5,6 +5,12 @@ const Zone = require('./zone');
 
 class Game {
     
+    fps: number;
+    mapDir: string;
+    objects: Object;
+    zones: Object;
+    updateInterval: any;
+    
     constructor(input){
         this.fps = input.fps;
         this.mapDir = input.mapDir;
@@ -31,7 +37,7 @@ class Game {
     }
     
     stop(){
-        this.clearInterval(this.updateInterval);
+        clearInterval(this.updateInterval);
     }
     
     onConnect (socket){
@@ -55,10 +61,7 @@ class Game {
         return new this.objects[type](this, room, ...args);
     }
     
-    eachSocket(fn){
-        return Object.keys(this.sockets).map(id => fn(this.sockets[id], id));
-    }
-    
 }
 
 module.exports = Game;
+export default Game;

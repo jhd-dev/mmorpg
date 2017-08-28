@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const config = require('./server/config/config');
 const router = require('./server/routes/router');
-const Game = require('./server/game-engine/game');
+import Game from './server/game-engine/game';
 const gameInput = require('./shared/game/game-input');
 
 require('./server/config/passport')(passport);
