@@ -7,11 +7,11 @@ class Game {
     
     fps: number;
     mapDir: string;
-    objects: Object;
-    zones: Object;
+    objects: object;
+    zones: object;
     updateInterval: any;
     
-    constructor(input){
+    constructor(input: any){
         this.fps = input.fps;
         this.mapDir = input.mapDir;
         this.objects = {};
@@ -24,12 +24,12 @@ class Game {
         this.updateInterval = null;
     }
     
-    addGameObject(className, pathToClass){
+    addGameObject(className: string, pathToClass: string){
         this.objects[className] = require(pathToClass);
         this.objects[className].GAME = this;
     }
     
-    start(fps = this.fps){
+    start(fps: number = this.fps){
         this.updateInterval = setInterval(() => {
             this.update();
             this.sendUpdate();
@@ -57,11 +57,10 @@ class Game {
         });
     }
     
-    create(type, room, args = []){
+    create(type: string, room, args: Array<any> = []){
         return new this.objects[type](this, room, ...args);
     }
     
 }
 
 module.exports = Game;
-export default Game;

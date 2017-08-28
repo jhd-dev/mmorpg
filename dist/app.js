@@ -1,5 +1,5 @@
 'use strict';
-Object.defineProperty(exports, "__esModule", { value: true });
+
 require('dotenv').load();
 var express = require('express');
 var session = require('express-session');
@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var config = require('./server/config/config');
 var router = require('./server/routes/router');
-var game_1 = require("./server/game-engine/game");
+var Game = require('./server/game-engine/game');
 var gameInput = require('./shared/game/game-input');
 require('./server/config/passport')(passport);
 mongoose.connect(config.MONGO_URI);
@@ -45,7 +45,7 @@ io.use(passportSocketIo.authorize({
     secret: 'secret',
     store: sessionStorage
 }));
-var game = new game_1.default(gameInput);
+var game = new Game(gameInput);
 io.sockets.on('connection', function (socket) {
     return game.onConnect(socket);
 });
