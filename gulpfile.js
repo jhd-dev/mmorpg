@@ -15,7 +15,7 @@ gulp.task('copy-files', function(){
         .pipe(gulp.dest(dest));
 });
 
-gulp.task('server-typescript', function(){
+gulp.task('typescript', function(){
     return gulp.src(['./src/**/*.ts', './src/**/*.js'], { base: base })
         .pipe(ts({
             exclude: 'node_modules',
@@ -46,3 +46,5 @@ gulp.task('sass', function(){
         }).on('error', sass.logError))
         .pipe(gulp.dest('./dist/client/css'));
 });
+
+gulp.task('build', ['copy-files', 'typescript', 'sass']);

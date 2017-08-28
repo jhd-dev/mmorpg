@@ -4,3 +4,4 @@ node_modules
 *.cpuprofile
 .DS_Store
 */dist
+dist
