@@ -9,7 +9,7 @@ class Client {
         this.GAME = GAME;
         this.chatCommands = {
             pm (socket, recipient, message) { //console.log('pm');
-                let recipientId = Object.keys(this.GAME.sockets).find(id => this.GAME.sockets[id].player.name === recipient);
+                let recipientId: string = Object.keys(this.GAME.sockets).find(id => this.GAME.sockets[id].player.name === recipient);
                 if (this.GAME.sockets[recipientId]){
                     this.GAME.sockets[recipientId].emit('chatMsg', {
                         name: socket.player.name,
@@ -107,7 +107,7 @@ class Client {
     }
     
     onChatMsg(data){
-        let message = data.message;
+        let message: strin = data.message;
         if (message.charAt(0) === '/'){
             let inputs = data.substr(1).split(' '); console.log(inputs);
             if (this.chatCommands[inputs[0]]){

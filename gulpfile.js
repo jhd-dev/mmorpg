@@ -48,3 +48,7 @@ gulp.task('sass', function(){
 });
 
 gulp.task('build', ['copy-files', 'typescript', 'sass']);
+
+gulp.task('watch:build', ['build'], function(){
+    gulp.watch('./src/**/*', ['build']);
+});
